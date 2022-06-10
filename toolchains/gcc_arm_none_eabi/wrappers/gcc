@@ -1,0 +1,5 @@
+#!/bin/bash
+
+set -euo pipefail
+# Workaround to replace all system includes with user includes
+external/gcc_arm_none_eabi_files/bin/arm-none-eabi-gcc "${@}" -fdiagnostics-color=always

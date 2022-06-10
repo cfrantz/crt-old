@@ -1,2 +1,4 @@
 workspace(name="crt")
 
+load("//third_party/bazel:repos.bzl", "bazel_repos")
+bazel_repos()

@@ -26,7 +26,7 @@ def _compiler_repository_impl(rctx):
     )
 
 compiler_repository = repository_rule(
-    impl = _compiler_repository_impl,
+    implementation = _compiler_repository_impl,
     attrs = {
         "path": attr.string(doc="Local disk path to compiler"),
         "url": attr.string(doc="URL to compiler archive"),

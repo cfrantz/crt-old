@@ -1,0 +1,81 @@
+load("//config:compiler.bzl", "toolchain_config", "isystemize")
+load("@rules_cc//cc:defs.bzl", "cc_toolchain")
+package(default_visibility = ["//visibility:public"])
+
+SYSTEM_INCLUDE_PATHS = [
+    "external/gcc_arm_none_eabi_files/arm-none-eabi/include/newlib-nano",
+    "external/gcc_arm_none_eabi_files/arm-none-eabi/include/c++/10.3.1",
+    "external/gcc_arm_none_eabi_files/arm-none-eabi/include/c++/10.3.1/arm-none-eabi",
+    "external/gcc_arm_none_eabi_files/arm-none-eabi/include/c++/10.3.1/backward",
+    "external/gcc_arm_none_eabi_files/lib/gcc/arm-none-eabi/10.3.1/include",
+    "external/gcc_arm_none_eabi_files/lib/gcc/arm-none-eabi/10.3.1/include-fixed",
+    "external/gcc_arm_none_eabi_files/arm-none-eabi/include",
+    "external/gcc_arm_none_eabi_files/arm-none-eabi/include/newlib-nano",
+    "external/gcc_arm_none_eabi_files/arm-none-eabi/include/c++/10.3.1",
+    "external/gcc_arm_none_eabi_files/arm-none-eabi/include/c++/10.3.1/arm-none-eabi",
+    "external/gcc_arm_none_eabi_files/arm-none-eabi/include/c++/10.3.1/backward",
+    "external/gcc_arm_none_eabi_files/lib/gcc/arm-none-eabi/10.3.1/include",
+    "external/gcc_arm_none_eabi_files/lib/gcc/arm-none-eabi/10.3.1/include-fixed",
+    "external/gcc_arm_none_eabi_files/arm-none-eabi/include"
+]
+
+
+toolchain_config(
+    name = "gcc_arm_none_eabi_config",
+    architecture = "armv6-m",
+    feature_set = "//features/common",
+    tools = {
+        "ar": "wrappers/ar",
+        "cpp": "wrappers/cpp",
+        "gcc": "wrappers/gcc",
+        "gcov": "wrappers/gcov",
+        "ld": "wrappers/ld",
+        "nm": "wrappers/nm",
+        "objcopy": "wrappers/objcopy",
+        "objdump": "wrappers/objdump",
+        "strip": "wrappers/strip",
+    },
+    toolchain_identifier = "arm-none-eabi",
+    include_directories = SYSTEM_INCLUDE_PATHS,
+    params = {
+        "compiler": "gcc",
+    },
+    substitutions = {
+        "[SYSTEM_INCLUDES]": isystemize(SYSTEM_INCLUDE_PATHS),
+    }
+)
+
+filegroup(
+    name = "compiler_components",
+    srcs = [
+        "//toolchains/gcc_arm_none_eabi/wrappers:all",
+        "@gcc_arm_none_eabi_files//:all",
+    ],
+)
+
+cc_toolchain(
+    name = "gcc_arm_none_eabi",
+    all_files = ":compiler_components",
+    compiler_files = ":compiler_components",
+    dwp_files = ":compiler_components",
+    linker_files = ":compiler_components",
+    objcopy_files = ":compiler_components",
+    strip_files = ":compiler_components",
+    as_files = ":compiler_components",
+    ar_files = ":compiler_components",
+    supports_param_files = False,
+    toolchain_config = ":gcc_arm_none_eabi_config",
+    toolchain_identifier = "arm-none-eabi",
+)
+
+toolchain(
+    name = "cc-toolchain-armv6-m",
+    exec_compatible_with = [
+        "@platforms//cpu:x86_64",
+    ],
+    target_compatible_with = [
+        "@platforms//cpu:armv6-m",
+    ],
+    toolchain = ":gcc_arm_none_eabi",
+    toolchain_type = "@bazel_tools//tools/cpp:toolchain_type",
+)

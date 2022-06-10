@@ -19,7 +19,7 @@ feature(
             actions = CPP_ALL_COMPILE_ACTIONS + C_ALL_COMPILE_ACTIONS,
             flag_groups = [
                 flag_group(
-                    flags = ["-nostdinc"],
+                    flags = ["-nostdinc", "[SYSTEM_INCLUDES]"],
                 ),
             ],
         ),
@@ -135,16 +135,6 @@ feature(
                 ),
             ],
         ),
-        flag_set(
-            actions = LD_ALL_ACTIONS,
-            flag_groups = [
-                flag_group(
-                    flags = [
-                        "-Wl,--gdb-index",
-                    ],
-                ),
-            ],
-        ),
     ],
     provides = ["compilation_mode"],
 )
@@ -160,16 +150,6 @@ feature(
                     flags = [
                         "-O1",
                         "-g3",
-                    ],
-                ),
-            ],
-        ),
-        flag_set(
-            actions = LD_ALL_ACTIONS,
-            flag_groups = [
-                flag_group(
-                    flags = [
-                        "-Wl,--gdb-index",
                     ],
                 ),
             ],

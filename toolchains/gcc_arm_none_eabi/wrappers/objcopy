@@ -1,0 +1,4 @@
+#!/bin/bash
+
+set -euo pipefail
+external/gcc_arm_none_eabi_files/bin/arm-none-eabi-objcopy "$@"

@@ -28,7 +28,6 @@ LD_ALL_ACTIONS = [
     ACTION_NAMES.cpp_link_executable,
 ]
 
-
 FeatureSetInfo = provider(fields=["features", "subst"])
 
 def reify_flag_group(
@@ -39,9 +38,21 @@ def reify_flag_group(
         expand_if_not_available = None,
         expand_if_true = None,
         expand_if_false = None,
-        expand_if_equal = None):
+        expand_if_equal = None,
+        type_name = None,
+        subst={}):
+    flags2 = []
+    for f in flags:
+        if f in subst:
+            if f.startswith('[') and f.endswith(']'):
+                flags2.extend(subst[f].split("|"))
+            else:
+                flags2.append(subst[f])
+        else:
+            flags2.append(f)
+
     return __flag_group(
-        flags,
+        flags2,
         flag_groups,
         iterate_over, 
         expand_if_available,
@@ -53,12 +64,43 @@ def reify_flag_group(
 def reify_flag_set(
         actions = [],
         with_features = [],
-        flag_groups = []):
+        flag_groups = [],
+type_name = None):
     return __flag_set(
         actions,
         with_features,  # TODO: fix this
         flag_groups = [reify_flag_group(**v) for v in flag_groups],
     )
+
+def feature_set_subst(fs, **kwargs):
+    subst = dict(fs.subst)
+    subst.update(kwargs)
+    features = {}
+    for name, feature in fs.features.items():
+        flag_sets = [
+            __flag_set(f.actions, f.with_features,
+                [reify_flag_group(
+                    g.flags,
+                    g.flag_groups,
+                    g.iterate_over,
+                    g.expand_if_available,
+                    g.expand_if_not_available,
+                    g.expand_if_true,
+                    g.expand_if_false,
+                    g.expand_if_equal,
+                    subst=subst)
+                for g in f.flag_groups])
+            for f in feature.flag_sets
+        ]
+        features[name] = __feature(
+            name = feature.name,
+            enabled = feature.enabled,
+            flag_sets = flag_sets,
+            requires = feature.requires,
+            implies = feature.implies,
+            provides = feature.provides,
+        )
+    return features
 
 def flag_group(
         flags = [],
@@ -124,7 +166,7 @@ def _feature_set_impl(ctx):
         f = feature[FeatureInfo]
         features[f.name] = f
     subst.update(ctx.attr.substitutions)
-    print(json.encode_indent(features))
+    #print(json.encode_indent(features))
     return [
         FeatureSetInfo(features=features, subst=subst)
     ]
