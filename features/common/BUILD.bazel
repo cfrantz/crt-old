@@ -1,0 +1,248 @@
+load(
+    "//features:defs.bzl",
+    "CPP_ALL_COMPILE_ACTIONS",
+    "C_ALL_COMPILE_ACTIONS",
+    "LD_ALL_ACTIONS",
+    "feature",
+    "feature_set",
+    "flag_group",
+    "flag_set",
+)
+
+package(default_visibility = ["//visibility:public"])
+
+feature(
+    name = "includes",
+    enabled = True,
+    flag_sets = [
+        flag_set(
+            actions = CPP_ALL_COMPILE_ACTIONS + C_ALL_COMPILE_ACTIONS,
+            flag_groups = [
+                flag_group(
+                    flags = ["-nostdinc"],
+                ),
+            ],
+        ),
+    ],
+)
+
+feature(
+    name = "all_warnings",
+    enabled = True,
+    flag_sets = [
+        flag_set(
+            actions = CPP_ALL_COMPILE_ACTIONS + C_ALL_COMPILE_ACTIONS,
+            flag_groups = [
+                flag_group(
+                    flags = [
+                        "-Wall",
+                        "-Wpedantic",
+                    ],
+                ),
+            ],
+        ),
+    ],
+)
+
+feature(
+    name = "all_warnings_as_errors",
+    enabled = False,
+    flag_sets = [
+        flag_set(
+            actions = CPP_ALL_COMPILE_ACTIONS + C_ALL_COMPILE_ACTIONS,
+            flag_groups = [
+                flag_group(
+                    flags = ["-Werror"],
+                ),
+            ],
+        ),
+    ],
+)
+
+feature(
+    name = "reproducible",
+    enabled = False,
+    flag_sets = [
+        flag_set(
+            actions = CPP_ALL_COMPILE_ACTIONS + C_ALL_COMPILE_ACTIONS,
+            flag_groups = [
+                flag_group(
+                    flags = ["-Werror=date-time"],
+                ),
+            ],
+        ),
+    ],
+)
+
+feature(
+    name = "exceptions",
+    enabled = False,
+    flag_sets = [
+        flag_set(
+            actions = CPP_ALL_COMPILE_ACTIONS,
+            flag_groups = [
+                flag_group(
+                    flags = [
+                        "-fno-exceptions",
+                        "-fno-non-call-exceptions",
+                    ],
+                ),
+            ],
+        ),
+    ],
+)
+
+feature(
+    name = "symbol_garbage_collection",
+    enabled = False,
+    flag_sets = [
+        flag_set(
+            actions = CPP_ALL_COMPILE_ACTIONS + C_ALL_COMPILE_ACTIONS,
+            flag_groups = [
+                flag_group(
+                    flags = [
+                        "-ffunction-sections",
+                        "-fdata-sections",
+                    ],
+                ),
+            ],
+        ),
+        flag_set(
+            actions = LD_ALL_ACTIONS,
+            flag_groups = [
+                flag_group(
+                    flags = [
+                        "-Wl,--gc-sections",
+                    ],
+                ),
+            ],
+        ),
+    ],
+)
+
+feature(
+    name = "dbg",
+    enabled = False,
+    flag_sets = [
+        flag_set(
+            actions = CPP_ALL_COMPILE_ACTIONS + C_ALL_COMPILE_ACTIONS,
+            flag_groups = [
+                flag_group(
+                    flags = [
+                        "-O0",
+                        "-g3",
+                    ],
+                ),
+            ],
+        ),
+        flag_set(
+            actions = LD_ALL_ACTIONS,
+            flag_groups = [
+                flag_group(
+                    flags = [
+                        "-Wl,--gdb-index",
+                    ],
+                ),
+            ],
+        ),
+    ],
+    provides = ["compilation_mode"],
+)
+
+feature(
+    name = "fastbuild",
+    enabled = False,
+    flag_sets = [
+        flag_set(
+            actions = CPP_ALL_COMPILE_ACTIONS + C_ALL_COMPILE_ACTIONS,
+            flag_groups = [
+                flag_group(
+                    flags = [
+                        "-O1",
+                        "-g3",
+                    ],
+                ),
+            ],
+        ),
+        flag_set(
+            actions = LD_ALL_ACTIONS,
+            flag_groups = [
+                flag_group(
+                    flags = [
+                        "-Wl,--gdb-index",
+                    ],
+                ),
+            ],
+        ),
+    ],
+    provides = ["compilation_mode"],
+)
+
+feature(
+    name = "opt",
+    enabled = False,
+    flag_sets = [
+        flag_set(
+            actions = CPP_ALL_COMPILE_ACTIONS + C_ALL_COMPILE_ACTIONS,
+            flag_groups = [
+                flag_group(
+                    flags = [
+                        "-O2",
+                        "-finline-small-functions",
+                        "-flto",
+                    ],
+                ),
+            ],
+        ),
+        flag_set(
+            actions = LD_ALL_ACTIONS,
+            flag_groups = [
+                flag_group(
+                    flags = [
+                        "-flto",
+                    ],
+                ),
+            ],
+        ),
+    ],
+    provides = ["compilation_mode"],
+)
+
+feature(
+    name = "architecture",
+    enabled = False,
+)
+
+feature(
+    name = "output_format",
+    enabled = False,
+)
+
+feature(
+    name = "misc",
+    enabled = False,
+)
+
+feature(
+    name = "coverage",
+    enabled = False,
+)
+
+feature_set(
+    name = "common",
+    feature = [
+        ":includes",
+        ":architecture",
+        ":all_warnings",
+        ":all_warnings_as_errors",
+        ":reproducible",
+        ":exceptions",
+        ":symbol_garbage_collection",
+        ":dbg",
+        ":fastbuild",
+        ":opt",
+        ":output_format",
+        ":misc",
+        ":coverage",
+    ],
+)
