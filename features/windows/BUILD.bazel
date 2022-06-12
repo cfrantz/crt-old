@@ -1,0 +1,14 @@
+load("@crt//config:compiler.bzl", "artifact_name")
+package(default_visibility = ["//visibility:public"])
+
+artifact_name(
+    name = "exe",
+    category = "executable",
+    extension = ".exe",
+)
+
+artifact_name(
+    name = "dll",
+    category = "dynamic_library",
+    extension = ".dll",
+)

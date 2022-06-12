@@ -18,7 +18,7 @@ def main(args):
     blob = subprocess.check_output([
         args[1], '-E', '-x', 'c++'] + args[2:] + ['-', '-v', '/dev/null'], universal_newlines=True,
         stdin=subprocess.DEVNULL, stderr=subprocess.STDOUT)
-    paths = []
+    paths = set()
     capture = False
     for line in blob.splitlines():
         if line == '#include <...> search starts here:':
@@ -29,10 +29,11 @@ def main(args):
             continue
         if not capture:
             continue
-        (_, p) = os.path.normpath(line.strip()).rsplit('external')
-        paths.append('external' + p)
 
-    print('SYSTEM_INCLUDE_PATHS =', json.dumps(paths, indent=4))
+        (_, p) = os.path.normpath(line.strip()).rsplit('external')
+        paths.add('external' + p)
+
+    print('SYSTEM_INCLUDE_PATHS =', json.dumps(sorted(paths), indent=4))
     return 0
 
 if __name__ == '__main__':

@@ -1,4 +1,4 @@
-load("//config:repo.bzl", "compiler_repository")
+load("@crt//config:repo.bzl", "compiler_repository")
 
 def gcc_arm_none_eabi_repos():
     compiler_repository(

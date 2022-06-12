@@ -12,11 +12,21 @@ exports_files({exports})
 """
 
 def _compiler_repository_impl(rctx):
-    rctx.download_and_extract(
-        url = rctx.attr.url,
-        sha256 = rctx.attr.sha256,
-        stripPrefix = rctx.attr.strip_prefix,
-    )
+    if rctx.attr.archive and rctx.attr.url:
+        fail("Set only one of \"archive\" or \"url\".")
+
+    if rctx.attr.archive:
+        rctx.extract(
+            archive = rctx.attr.archive,
+            stripPrefix = rctx.attr.strip_prefix,
+        )
+    elif rctx.attr.url:
+        rctx.download_and_extract(
+            url = rctx.attr.url,
+            sha256 = rctx.attr.sha256,
+            stripPrefix = rctx.attr.strip_prefix,
+        )
+
     rctx.file(
         "BUILD.bazel",
         BUILD_TEMPLATE.format(
@@ -28,7 +38,7 @@ def _compiler_repository_impl(rctx):
 compiler_repository = repository_rule(
     implementation = _compiler_repository_impl,
     attrs = {
-        "path": attr.string(doc="Local disk path to compiler"),
+        "archive": attr.label(doc="Local path to compiler archive", allow_single_file=True),
         "url": attr.string(doc="URL to compiler archive"),
         "sha256": attr.string(doc="SHA256 digest of the compiler archive"),
         "strip_prefix": attr.string(doc="Strip path prefixes when unarchiving"),

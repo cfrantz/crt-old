@@ -1,22 +1,21 @@
 load("//config:compiler.bzl", "setup")
-load("//platforms/arm:devices.bzl", "DEVICES")
+load("//platforms/x86_64:windows.bzl", "DEVICES")
 package(default_visibility = ["//visibility:public"])
 
 SYSTEM_INCLUDE_PATHS = [
-    "external/gcc_arm_none_eabi_files/arm-none-eabi/include",
-    "external/gcc_arm_none_eabi_files/arm-none-eabi/include/c++/10.3.1",
-    "external/gcc_arm_none_eabi_files/arm-none-eabi/include/c++/10.3.1/arm-none-eabi",
-    "external/gcc_arm_none_eabi_files/arm-none-eabi/include/c++/10.3.1/backward",
-    "external/gcc_arm_none_eabi_files/arm-none-eabi/include/newlib-nano",
-    "external/gcc_arm_none_eabi_files/lib/gcc/arm-none-eabi/10.3.1/include",
-    "external/gcc_arm_none_eabi_files/lib/gcc/arm-none-eabi/10.3.1/include-fixed",
+    "external/gcc_mxe_mingw64_files/lib/gcc/x86_64-w64-mingw32.shared/11.3.0/include",
+    "external/gcc_mxe_mingw64_files/lib/gcc/x86_64-w64-mingw32.shared/11.3.0/include-fixed",
+    "external/gcc_mxe_mingw64_files/lib/gcc/x86_64-w64-mingw32.shared/11.3.0/include/c++",
+    "external/gcc_mxe_mingw64_files/lib/gcc/x86_64-w64-mingw32.shared/11.3.0/include/c++/backward",
+    "external/gcc_mxe_mingw64_files/lib/gcc/x86_64-w64-mingw32.shared/11.3.0/include/c++/x86_64-w64-mingw32.shared",
+    "external/gcc_mxe_mingw64_files/x86_64-w64-mingw32.shared/include"
 ]
 
 filegroup(
     name = "compiler_components",
     srcs = [
-        "//toolchains/gcc_arm_none_eabi/wrappers:all",
-        "@gcc_arm_none_eabi_files//:all",
+        "//toolchains/gcc_mxe_mingw64/wrappers:all",
+        "@gcc_mxe_mingw64_files//:all",
     ],
 )
 
