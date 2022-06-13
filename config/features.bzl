@@ -46,9 +46,9 @@ def reify_flag_group(
         if f in subst:
             if f.startswith('[') and f.endswith(']'):
                 flags2.extend(subst[f].split("|"))
-            else:
-                flags2.append(subst[f])
         else:
+            for k, v in subst.items():
+                f = f.replace(k, v)
             flags2.append(f)
 
     return __flag_group(
