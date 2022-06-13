@@ -1,5 +1,5 @@
 load(
-    "//features:defs.bzl",
+    "//config:features.bzl",
     "CPP_ALL_COMPILE_ACTIONS",
     "C_ALL_COMPILE_ACTIONS",
     "LD_ALL_ACTIONS",

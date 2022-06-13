@@ -1,4 +1,4 @@
-load("//features:defs.bzl", "FeatureSetInfo", "feature_set_subst")
+load("//config:features.bzl", "FeatureSetInfo", "feature_set_subst")
 load(
     "@bazel_tools//tools/cpp:cc_toolchain_config_lib.bzl",
     "ArtifactNamePatternInfo",
