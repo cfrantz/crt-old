@@ -2,3 +2,9 @@ workspace(name="crt")
 
 load("//third_party/bazel:repos.bzl", "bazel_repos")
 bazel_repos()
+load("//third_party/bazel:deps.bzl", "bazel_deps")
+bazel_deps()
+
+
+load("//third_party/qemu:repos.bzl", "qemu_repos")
+qemu_repos()
