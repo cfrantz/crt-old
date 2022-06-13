@@ -2,7 +2,7 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 def qemu_repos():
     http_archive(
-        name = "qemu",
+        name = "qemu_src",
         urls = [
             "https://download.qemu.org/qemu-7.0.0.tar.xz",
         ],

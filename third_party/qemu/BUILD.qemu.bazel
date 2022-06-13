@@ -13,20 +13,21 @@ targets = [
     "riscv32-softmmu",
     "x86_64-softmmu",
 ]
+
 binaries = [
+    "qemu-edid",
     "qemu-ga",
+    "qemu-img",
     "qemu-io",
     "qemu-nbd",
-    "qemu-storage-daemon",
-    "qemu-system-i386",
-    "qemu-system-x86_64",
-    "qemu-edid",
-    "qemu-img",
-    "qemu-keymap",
     "qemu-pr-helper",
+    "qemu-storage-daemon",
     "qemu-system-arm",
+    "qemu-system-i386",
     "qemu-system-riscv32",
+    "qemu-system-x86_64",
 ]
+
 disable = [
     "cocoa",
     "coreaudio",
