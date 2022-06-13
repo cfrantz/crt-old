@@ -1,88 +1,13 @@
 package(default_visibility = ["//visibility:public"])
-load("@rules_foreign_cc//foreign_cc:configure.bzl", "configure_make")
-load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
+exports_files(glob(["**"]))
 
 filegroup(
-    name = "all_srcs",
-    srcs = glob(["**"])
-)
-
-targets = [
-    "arm-softmmu",
-    "i386-softmmu",
-    "riscv32-softmmu",
-    "x86_64-softmmu",
-]
-
-binaries = [
-    "qemu-edid",
-    "qemu-ga",
-    "qemu-img",
-    "qemu-io",
-    "qemu-nbd",
-    "qemu-pr-helper",
-    "qemu-storage-daemon",
-    "qemu-system-arm",
-    "qemu-system-i386",
-    "qemu-system-riscv32",
-    "qemu-system-x86_64",
-]
-
-disable = [
-    "cocoa",
-    "coreaudio",
-    "crypto-afalg",
-    "dmg",
-    "docs",
-    "dsound",
-    "gcrypt",
-    "gettext",
-    "glusterfs",
-    "gnutls",
-    "hax",
-    "hvf",
-    "jack",
-    "l2tpv3",
-    "libdaxctl",
-    "libiscsi",
-    "libnfs",
-    "libpmem",
-    "mpath",
-    "numa",
-    "nvmm",
-    "oss",
-    "pa",
-    "parallels",
-    "qcow1",
-    "qed",
-    "rbd",
-    "replication",
-    "slirp-smbd",
-    "xen",
-    "xen-pci-passthrough",
-    "rdma",
-    "pvrdma",
-]
-
-configure_make(
-    name = "build_qemu",
-    configure_options = [
-        "--target-list={}".format(",".join(targets)),
-    ] + ["--disable-{}".format(x) for x in disable],
-    lib_source = ":all_srcs",
-    out_binaries = binaries,
+    name = "qemu-system-x86_64",
+    srcs = ["bin/qemu-system-x86_64"],
+    data = glob(["share/qemu/**"]),
 )
 
 filegroup(
-    name = "gen_dir",
-    srcs = [":build_qemu"],
-    output_group = "gen_dir",
-)
-
-pkg_tar(
-    name = "qemu-binaries",
-    extension = "tar.xz",
-    srcs = [":gen_dir"],
-    package_dir = "qemu",
-    strip_prefix = "build_qemu",
+    name = "qemu-system-arm",
+    srcs = ["bin/qemu-system-arm"],
 )
