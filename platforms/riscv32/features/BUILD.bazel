@@ -1,0 +1,39 @@
+load(
+    "//config:features.bzl",
+    "CPP_ALL_COMPILE_ACTIONS",
+    "C_ALL_COMPILE_ACTIONS",
+    "LD_ALL_ACTIONS",
+    "feature",
+    "feature_set",
+    "flag_group",
+    "flag_set",
+)
+
+package(default_visibility = ["//visibility:public"])
+
+feature(
+    name = "architecture",
+    enabled = True,
+    flag_sets = [
+        flag_set(
+            actions = CPP_ALL_COMPILE_ACTIONS + C_ALL_COMPILE_ACTIONS + LD_ALL_ACTIONS,
+            flag_groups = [
+                flag_group(
+                    flags = [
+                        "-march=ARCHITECTURE",
+                        "-mabi=ABI",
+                        "-mcmodel=CMODEL",
+                    ],
+                ),
+            ],
+        ),
+    ],
+)
+
+feature_set(
+    name = "rv32imc",
+    base = ["//features/common"],
+    feature = [
+        ":architecture",
+    ],
+)

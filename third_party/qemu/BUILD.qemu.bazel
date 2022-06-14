@@ -14,3 +14,8 @@ filegroup(
     name = "qemu-system-arm",
     srcs = ["bin/qemu-system-arm"],
 )
+
+filegroup(
+    name = "qemu-system-riscv32",
+    srcs = ["bin/qemu-system-riscv32"],
+)

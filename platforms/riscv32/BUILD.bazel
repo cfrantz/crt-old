@@ -1,0 +1,22 @@
+package(default_visibility = ["//visibility:public"])
+
+load("//config:execution.bzl", "exec_config")
+
+platform(
+    name = "opentitan",
+    constraint_values = [
+        "@platforms//cpu:riscv32",
+        "@platforms//os:none",
+    ],
+)
+
+exec_config(
+    name = "qemu",
+    params = [
+        "-semihosting",
+        "-M opentitan",
+        "-nographic",
+        "-bios {binary}",
+    ],
+    program = "@qemu//:qemu-system-riscv32",
+)
