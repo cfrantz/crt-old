@@ -1,8 +1,21 @@
 package(default_visibility = ["//visibility:public"])
+load("//config:execution.bzl", "exec_config")
 
 platform(
     name = "cortex_m",
     constraint_values = [
         "@platforms//cpu:armv6-m",
+    ],
+)
+
+exec_config(
+    name = "qemu",
+    program = "@qemu//:qemu-system-arm",
+    params = [
+        "-semihosting",
+        "-M", "lm3s811evb",
+        "-m", "8K",
+        "-nographic",
+        "-kernel", "{binary}",
     ],
 )
