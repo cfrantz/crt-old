@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+DISK_IMAGE_SNAPSHOT=@DISK_IMAGE_SNAPSHOT@
+if [[ ! -z "$DISK_IMAGE_SNAPSHOT" ]]; then
+    external/qemu/bin/qemu-img create \
+        -b $(realpath @DISK_IMAGE@) -F qcow2 \
+        -f qcow2 $DISK_IMAGE_SNAPSHOT
+fi
+
 # EXCLUDE_EXTERNAL implies windows
 if @EXCLUDE_EXTERNAL@; then
     rm -rf exclude_external
@@ -12,16 +19,33 @@ if @EXCLUDE_EXTERNAL@; then
     done
     (
         cd exclude_external
-        rm -f _stdout.txt _stderr.txt _exit.txt
         BATCH=$(find . -name __test__.bat \! -path ./__test__.bat)
         if [[ ! -z "$BATCH" ]]; then
             ln -sf ${BATCH} __test__.bat
         fi
     )
+    # TODO(cfrantz): Do better at finding DLLs
+    DLLS=$(find -L external -name "*.dll")
+    for f in ${DLLS}; do
+        dll=$(basename $f)
+        cp -al $f exclude_external/$dll
+    done
 fi
 
-@EMULATOR@ @ARGS@
-RC=$?
+if @QUICK_KILL@; then
+    @EMULATOR@ @ARGS@ &
+    PID=$!
+    RUNNING=0
+    while [[ $RUNNING == 0 && ! -f exclude_external/_exit.txt ]]; do
+        sleep 1
+        ps $PID &>/dev/null
+        RUNNING=$?
+    done
+    kill $PID
+else
+    @EMULATOR@ @ARGS@
+    RC=$?
+fi
 
 if @EXCLUDE_EXTERNAL@; then
     cd exclude_external
@@ -30,5 +54,9 @@ if @EXCLUDE_EXTERNAL@; then
     # The _exit file may have some extra whitespace.
     [ -f _exit.txt ] && RC=$(cat _exit.txt)
     RC=${RC%% *}
+fi
+
+if [[ ! -z "$DISK_IMAGE_SNAPSHOT" ]]; then
+    rm $DISK_IMAGE_SNAPSHOT
 fi
 exit $RC

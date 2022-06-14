@@ -1,3 +1,4 @@
+load("@rules_cc//cc:find_cc_toolchain.bzl", "find_cc_toolchain")
 load("//config:execution.bzl", "ExecConfigInfo")
 load("//rules:transition.bzl", "platform_rule")
 
@@ -10,12 +11,23 @@ echo %ERRORLEVEL% >_exit.txt
 # FIXME: deal with ctx.attr.binary and exec_config.program better.
 # Make sure throw errors if they're multiple files.
 def _runner_impl(ctx):
+    cc_toolchain = find_cc_toolchain(ctx).cc
     exec_config = ctx.attr.exec_config[ExecConfigInfo]
+    program = exec_config.program[DefaultInfo].files.to_list()[0]
+    binary = ctx.attr.binary[DefaultInfo].files.to_list()[0]
+
     subst = dict(exec_config.substitutions)
     subst.update(ctx.attr.substitutions)
-    binary = ctx.attr.binary[DefaultInfo].files.to_list()[0]
     subst["binary"] = binary.short_path
     subst["windows_binary"] = binary.short_path.replace("/", "\\")
+
+    runfiles = [program, binary]
+    if exec_config.preparation == "windows":
+        subst["disk_image_snapshot"] = "/tmp/qemu.{}.img.$$".format(ctx.attr.name)
+        batch = ctx.actions.declare_file("__test__.bat")
+        ctx.actions.write(batch, BATCH_TEMPLATE.format(**subst))
+        runfiles.append(batch)
+
     params = []
     exclude_external = "false"
     for p in exec_config.params:
@@ -24,24 +36,21 @@ def _runner_impl(ctx):
         params.append(p.format(**subst))
 
     out_file = ctx.actions.declare_file(ctx.label.name + ".bash")
-    program = exec_config.program[DefaultInfo].files.to_list()[0]
     ctx.actions.expand_template(
         template = ctx.file._runner,
         output = out_file,
         substitutions = {
-            "@EXCLUDE_EXTERNAL@": exclude_external,
-            "@EMULATOR@": program.short_path,
             "@ARGS@": " ".join(params),
+            "@EMULATOR@": program.short_path,
+            "@EXCLUDE_EXTERNAL@": exclude_external,
+            "@DISK_IMAGE@": subst.get("disk_image", ""),
+            "@DISK_IMAGE_SNAPSHOT@": subst.get("disk_image_snapshot", ""),
+            "@QUICK_KILL@": subst.get("quick_kill", "false"),
         },
         is_executable = True,
     )
-    runfiles = [program, binary]
-    if exec_config.preparation == "windows":
-        batch = ctx.actions.declare_file("__test__.bat")
-        ctx.actions.write(batch, BATCH_TEMPLATE.format(**subst))
-        runfiles.append(batch)
 
-    runfiles = ctx.runfiles(files = runfiles + exec_config.data)
+    runfiles = ctx.runfiles(files = runfiles + exec_config.data, transitive_files=cc_toolchain.all_files)
     runfiles = runfiles.merge(exec_config.program[DefaultInfo].data_runfiles)
     runfiles = runfiles.merge(ctx.attr.binary[DefaultInfo].data_runfiles)
     return DefaultInfo(
@@ -60,7 +69,8 @@ runner = platform_rule(
             default = "//rules/scripts:runner.template.bash",
             allow_single_file = True,
         ),
-
+        "_cc_toolchain": attr.label(default = Label("@bazel_tools//tools/cpp:current_cc_toolchain")),
     },
+    toolchains = ["@rules_cc//cc:toolchain_type"],
     executable = True,
 )

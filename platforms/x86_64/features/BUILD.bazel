@@ -1,0 +1,37 @@
+load(
+    "//config:features.bzl",
+    "CPP_ALL_COMPILE_ACTIONS",
+    "C_ALL_COMPILE_ACTIONS",
+    "LD_ALL_ACTIONS",
+    "feature",
+    "feature_set",
+    "flag_group",
+    "flag_set",
+)
+
+package(default_visibility = ["//visibility:public"])
+
+feature(
+    name = "default_link_flags",
+    enabled = True,
+    flag_sets = [
+        flag_set(
+            actions = CPP_ALL_COMPILE_ACTIONS + C_ALL_COMPILE_ACTIONS + LD_ALL_ACTIONS,
+            flag_groups = [
+                flag_group(
+                    flags = [
+                        "-lstdc++",
+                    ],
+                ),
+            ],
+        ),
+    ],
+)
+
+feature_set(
+    name = "windows",
+    base = ["//features/common"],
+    feature = [
+        ":default_link_flags",
+    ],
+)

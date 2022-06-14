@@ -4,7 +4,9 @@ exports_files(glob(["**"]))
 filegroup(
     name = "qemu-system-x86_64",
     srcs = ["bin/qemu-system-x86_64"],
-    data = glob(["share/qemu/**"]),
+    data = glob(["share/qemu/**"]) + [
+        "bin/qemu-img",
+    ],
 )
 
 filegroup(

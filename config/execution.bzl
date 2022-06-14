@@ -6,7 +6,7 @@ def _exec_config_impl(ctx):
         params = [ctx.expand_location(p, ctx.attr.data) for p in ctx.attr.params],
         data = [f for f in ctx.files.data],
         preparation = ctx.attr.preparation,
-        substitutions = ctx.attr.substitutions,
+        substitutions = {k: ctx.expand_location(v, ctx.attr.data) for k, v in ctx.attr.substitutions.items()},
     )]
 
 exec_config = rule(
