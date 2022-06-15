@@ -77,3 +77,19 @@ platform_runner = platform_rule(
     toolchains = ["@rules_cc//cc:toolchain_type"],
     executable = True,
 )
+
+platform_test = platform_rule(
+    implementation = _platform_runner_impl,
+    attrs = {
+        "binary": attr.label(doc="Program to execute"),
+        "exec_config": attr.label(mandatory=True, providers=[ExecConfigInfo], doc="Execution configuration"),
+        "substitutions": attr.string_dict(doc="Substitutions to apply to the exec_config"),
+        "_runner": attr.label(
+            default = "//rules/scripts:platform_runner.template.bash",
+            allow_single_file = True,
+        ),
+        "_cc_toolchain": attr.label(default = Label("@bazel_tools//tools/cpp:current_cc_toolchain")),
+    },
+    toolchains = ["@rules_cc//cc:toolchain_type"],
+    test = True,
+)

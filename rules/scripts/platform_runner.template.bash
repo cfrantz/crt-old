@@ -1,6 +1,19 @@
 #!/usr/bin/env bash
-set -euo pipefail
 
+# FIXME: horrible hack to find the first Xwindows display since when
+# running in bazel's test environment, local environment variables are
+# redacted.
+if [[ -z "${DISPLAY+value}" ]]; then
+    displays=($(
+        for i in $(seq 0 9); do
+            DISPLAY=:$i xdpyinfo &>/dev/null && echo ":$i"
+        done
+        echo hello
+    ))
+    export DISPLAY=${displays[0]}
+fi
+
+set -euo pipefail
 STDOUT=@STDOUT@
 STDERR=@STDERR@
 EXITCODE=@EXITCODE@
