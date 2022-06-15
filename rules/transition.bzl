@@ -24,7 +24,7 @@ def platform_rule(**kwargs):
     )
 
 
-def _target_platform_impl(ctx):
+def _platform_target_impl(ctx):
     info = ctx.attr.target[0][DefaultInfo]
     return [
         DefaultInfo(
@@ -33,8 +33,8 @@ def _target_platform_impl(ctx):
         ),
     ]
 
-target_platform = platform_rule(
-    implementation = _target_platform_impl,
+platform_target = platform_rule(
+    implementation = _platform_target_impl,
     attrs = {
         "target": attr.label(cfg = platform_transition),
     },

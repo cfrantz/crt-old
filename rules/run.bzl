@@ -10,7 +10,7 @@ echo %ERRORLEVEL% >_exit.txt
 
 # FIXME: deal with ctx.attr.binary and exec_config.program better.
 # Make sure throw errors if they're multiple files.
-def _runner_impl(ctx):
+def _platform_runner_impl(ctx):
     cc_toolchain = find_cc_toolchain(ctx).cc
     exec_config = ctx.attr.exec_config[ExecConfigInfo]
     program = exec_config.program[DefaultInfo].files.to_list()[0]
@@ -59,14 +59,14 @@ def _runner_impl(ctx):
         executable = out_file,
     )
 
-runner = platform_rule(
-    implementation = _runner_impl,
+platform_runner = platform_rule(
+    implementation = _platform_runner_impl,
     attrs = {
         "binary": attr.label(doc="Program to execute"),
         "exec_config": attr.label(mandatory=True, providers=[ExecConfigInfo], doc="Execution configuration"),
         "substitutions": attr.string_dict(doc="Substitutions to apply to the exec_config"),
         "_runner": attr.label(
-            default = "//rules/scripts:runner.template.bash",
+            default = "//rules/scripts:platform_runner.template.bash",
             allow_single_file = True,
         ),
         "_cc_toolchain": attr.label(default = Label("@bazel_tools//tools/cpp:current_cc_toolchain")),
