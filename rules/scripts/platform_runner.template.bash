@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+STDOUT=@STDOUT@
+STDERR=@STDERR@
+EXITCODE=@EXITCODE@
+
 DISK_IMAGE_SNAPSHOT=@DISK_IMAGE_SNAPSHOT@
 if [[ ! -z "$DISK_IMAGE_SNAPSHOT" ]]; then
     external/qemu/bin/qemu-img create \
@@ -32,11 +36,12 @@ if @EXCLUDE_EXTERNAL@; then
     done
 fi
 
-if @QUICK_KILL@; then
+if @QUICK_KILL@ && [[ ! -z "$EXITCODE" ]]; then
+    touch "$EXITCODE"
     @EMULATOR@ @ARGS@ &
     PID=$!
     RUNNING=0
-    while [[ $RUNNING == 0 && ! -f exclude_external/_exit.txt ]]; do
+    while [[ $RUNNING == 0 && ! -s "$EXITCODE" ]]; do
         sleep 1
         ps $PID &>/dev/null
         RUNNING=$?
@@ -47,14 +52,11 @@ else
     RC=$?
 fi
 
-if @EXCLUDE_EXTERNAL@; then
-    cd exclude_external
-    [ -f _stdout.txt ] && cat _stdout.txt
-    [ -f _stderr.txt ] && cat >&2 _stderr.txt
-    # The _exit file may have some extra whitespace.
-    [ -f _exit.txt ] && RC=$(cat _exit.txt)
-    RC=${RC%% *}
-fi
+[[ ! -z "$STDOUT" && -f "$STDOUT" ]] && cat "$STDOUT" && rm "$STDOUT"
+[[ ! -z "$STDERR" && -f "$STDERR" ]] && cat >&2 "$STDERR" && rm "$STDERR"
+# The _exit file may have some extra whitespace.
+[[ ! -z "$EXITCODE" && -f "$EXITCODE" ]] && RC=$(cat "$EXITCODE" && rm "$EXITCODE")
+RC=${RC%% *}
 
 if [[ ! -z "$DISK_IMAGE_SNAPSHOT" ]]; then
     rm $DISK_IMAGE_SNAPSHOT

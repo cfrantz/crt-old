@@ -17,21 +17,33 @@ exec_config(
         "-m", "{memory}",
         "{nographic}",
         "{monitor}",
-        "{serial}",
         "-usb", "-device", "usb-tablet",
         "-hda", "{disk_image_snapshot}",
+        # Writing to qemu's vvfat filesystem is slow and unreliable.
+        # We set up windows COM ports to capture stdout, stderr and
+        # the program's exit code.
         "-drive", "file=fat:rw:$PWD/exclude_external,format=raw",
+        "-chardev file,id=com3,path={exitcode}",
+        "-serial file:{stdout}",
+        "-serial file:{stderr}",
+        "-device pci-serial,chardev=com3",
     ],
     data = ["//prebuilt:win7.img"],
     preparation = "windows",
     substitutions = {
         "disk_image": "$(location //prebuilt:win7.img)",
+        # You should only use quick_kill if you're using a disk_image_snapshot
+        # for the disk image.  Snapshots are discarded on every run, so an
+        # improper shutdown doesn't matter.
+        "quick_kill": "true",
         "shutdown": "shutdown /p",
-#        "shutdown": "",
+        #"shutdown": "",
         "memory": "4G",
-#        "nographic": "-nographic",
+        #"nographic": "-nographic",
         "nographic": "",
         "monitor": "-monitor null",
-        "serial": "-serial null",
+        "stdout": "/tmp/stdout.$$",
+        "stderr": "/tmp/stderr.$$",
+        "exitcode": "/tmp/exitcode.$$",
     },
 )

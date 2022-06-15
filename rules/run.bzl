@@ -3,8 +3,8 @@ load("//config:execution.bzl", "ExecConfigInfo")
 load("//rules:transition.bzl", "platform_rule")
 
 BATCH_TEMPLATE = """
-{windows_binary} >_stdout.txt 2>_stderr.txt
-echo %ERRORLEVEL% >_exit.txt
+{windows_binary} >COM1 2>COM2
+echo %ERRORLEVEL% >COM3
 {shutdown}
 """
 
@@ -46,6 +46,9 @@ def _platform_runner_impl(ctx):
             "@DISK_IMAGE@": subst.get("disk_image", ""),
             "@DISK_IMAGE_SNAPSHOT@": subst.get("disk_image_snapshot", ""),
             "@QUICK_KILL@": subst.get("quick_kill", "false"),
+            "@STDOUT@": subst.get("stdout", ""),
+            "@STDERR@": subst.get("stderr", ""),
+            "@EXITCODE@": subst.get("exitcode", ""),
         },
         is_executable = True,
     )
