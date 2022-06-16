@@ -1,5 +1,6 @@
 load("//config:compiler.bzl", "setup")
 load("//platforms/arm:devices.bzl", "DEVICES")
+
 package(default_visibility = ["//visibility:public"])
 
 SYSTEM_INCLUDE_PATHS = [
@@ -24,7 +25,14 @@ filegroup(
     name = device.name,
     architecture = device.architecture,
     artifact_naming = device.artifact_naming,
+    compiler_components = ":compiler_components",
+    constraints = device.constraints,
     feature_set = device.feature_set,
+    include_directories = SYSTEM_INCLUDE_PATHS,
+    params = {
+        "compiler": "gcc",
+    },
+    substitutions = device.substitutions,
     tools = {
         "ar": "wrappers/ar",
         "cpp": "wrappers/cpp",
@@ -35,12 +43,5 @@ filegroup(
         "objcopy": "wrappers/objcopy",
         "objdump": "wrappers/objdump",
         "strip": "wrappers/strip",
-    },
-    compiler_components = ":compiler_components",
-    include_directories = SYSTEM_INCLUDE_PATHS,
-    constraints = device.constraints,
-    substitutions = device.substitutions,
-    params = {
-        "compiler": "gcc",
     },
 ) for device in DEVICES]

@@ -8,21 +8,21 @@ load(
 load("@rules_cc//cc:defs.bzl", "cc_toolchain")
 
 PARAM_DEFAULTS = {
-        "host_system_name": "x86_64-unknown-linux-gnu",
-        "target_system_name": "unknown",
-        "target_libc": "unknown",
-        "compiler": "unknown",
-        "abi_version": "unknown",
-        "abi_libc_version": "unknown",
+    "host_system_name": "x86_64-unknown-linux-gnu",
+    "target_system_name": "unknown",
+    "target_libc": "unknown",
+    "compiler": "unknown",
+    "abi_version": "unknown",
+    "abi_libc_version": "unknown",
 }
 
-def isystemize(paths=[]):
-    paths = ["-isystem"+p for p in paths]
+def isystemize(paths = []):
+    paths = ["-isystem" + p for p in paths]
     return "|".join(paths)
 
 def _toolchain_config_impl(ctx):
     tool_paths = [
-        tool_path(name=k, path=v)
+        tool_path(name = k, path = v)
         for k, v in ctx.attr.tools.items()
     ]
     params = dict(**PARAM_DEFAULTS)
@@ -46,23 +46,22 @@ def _toolchain_config_impl(ctx):
         artifact_name_patterns = artifact_name_patterns,
     )
 
-
 toolchain_config = rule(
     implementation = _toolchain_config_impl,
     attrs = {
-        "architecture": attr.string(doc="Target architecture"),
-        "artifact_naming": attr.label_list(providers=[ArtifactNamePatternInfo], doc="Naming conventions"),
-        "feature_set": attr.label(providers=[FeatureSetInfo], doc="Features of this toolchain"),
-        "substitutions": attr.string_dict(doc="Substitutions for the feature_set"),
-        "tools": attr.string_dict(doc="Mapping of tool names to their wrapper paths"),
+        "architecture": attr.string(doc = "Target architecture"),
+        "artifact_naming": attr.label_list(providers = [ArtifactNamePatternInfo], doc = "Naming conventions"),
+        "feature_set": attr.label(providers = [FeatureSetInfo], doc = "Features of this toolchain"),
+        "substitutions": attr.string_dict(doc = "Substitutions for the feature_set"),
+        "tools": attr.string_dict(doc = "Mapping of tool names to their wrapper paths"),
         "toolchain_identifier": attr.string(
-            mandatory=True,
-            doc="Indentifier used by the toolchain, this should be consistent with the cc_toolchain rule attribute",
+            mandatory = True,
+            doc = "Indentifier used by the toolchain, this should be consistent with the cc_toolchain rule attribute",
         ),
-        "include_directories": attr.string_list(doc="Compiler-specific include directories"),
-        "params": attr.string_dict(doc="Toolchain config parameters", default={}),
+        "include_directories": attr.string_list(doc = "Compiler-specific include directories"),
+        "params": attr.string_dict(doc = "Toolchain config parameters", default = {}),
     },
-#    provides = [CcToolchainConfigInfo],
+    provides = [CcToolchainConfigInfo],
 )
 
 def _artifact_name_impl(ctx):
@@ -75,9 +74,9 @@ def _artifact_name_impl(ctx):
 artifact_name = rule(
     implementation = _artifact_name_impl,
     attrs = {
-        "category": attr.string(mandatory=True, doc="The category of artifacts that this selection applies to."),
-        "prefix": attr.string(doc="The prefix for creating the artifact for this selection."),
-        "extension": attr.string(doc="The extension for creating the artifact for this selection."),
+        "category": attr.string(mandatory = True, doc = "The category of artifacts that this selection applies to."),
+        "prefix": attr.string(doc = "The prefix for creating the artifact for this selection."),
+        "extension": attr.string(doc = "The extension for creating the artifact for this selection."),
     },
     provides = [ArtifactNamePatternInfo],
 )
@@ -92,9 +91,7 @@ def setup(
         include_directories,
         constraints,
         substitutions = {},
-        params = {},
-    ):
-
+        params = {}):
     subst = {
         "[SYSTEM_INCLUDES]": isystemize(include_directories),
     }
@@ -132,6 +129,6 @@ def setup(
             "@platforms//cpu:x86_64",
         ],
         target_compatible_with = constraints,
-        toolchain = ":"+name,
+        toolchain = ":" + name,
         toolchain_type = "@bazel_tools//tools/cpp:toolchain_type",
     )

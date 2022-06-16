@@ -1,4 +1,5 @@
 package(default_visibility = ["//visibility:public"])
+
 load("//config:execution.bzl", "exec_config")
 
 platform(
@@ -11,7 +12,7 @@ platform(
 
 exec_config(
     name = "qemu_windows",
-    program = "@qemu//:qemu-system-x86_64",
+    data = ["//prebuilt:win7.img"],
     params = [
         "-M pc",
         "-m {memory}",
@@ -28,8 +29,8 @@ exec_config(
         "-serial file:{stderr}",
         "-device pci-serial,chardev=com3",
     ],
-    data = ["//prebuilt:win7.img"],
     preparation = "windows",
+    program = "@qemu//:qemu-system-x86_64",
     substitutions = {
         "disk_image": "$(location //prebuilt:win7.img)",
         # You should only use quick_kill if you're using a disk_image_snapshot

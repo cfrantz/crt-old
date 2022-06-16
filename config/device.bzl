@@ -4,8 +4,7 @@ def device_config(
         constraints,
         feature_set = "//features/common",
         artifact_naming = [],
-        substitutions = {},
-    ):
+        substitutions = {}):
     return struct(
         name = name,
         architecture = architecture,

@@ -19,7 +19,10 @@ feature(
             actions = CPP_ALL_COMPILE_ACTIONS + C_ALL_COMPILE_ACTIONS,
             flag_groups = [
                 flag_group(
-                    flags = ["-nostdinc", "[SYSTEM_INCLUDES]"],
+                    flags = [
+                        "-nostdinc",
+                        "[SYSTEM_INCLUDES]",
+                    ],
                 ),
             ],
         ),

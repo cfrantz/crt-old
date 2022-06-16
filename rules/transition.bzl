@@ -12,7 +12,7 @@ def platform_rule(**kwargs):
 
     attrs = kwargs.pop("attrs", {})
     if "platform" not in attrs:
-        attrs["platform"] = attr.string(doc="Platform configuration")
+        attrs["platform"] = attr.string(doc = "Platform configuration")
     attrs["_allowlist_function_transition"] = attr.label(
         default = "@bazel_tools//tools/allowlists/function_transition_allowlist",
     )
@@ -22,7 +22,6 @@ def platform_rule(**kwargs):
         attrs = attrs,
         **kwargs
     )
-
 
 def _platform_target_impl(ctx):
     info = ctx.attr.target[0][DefaultInfo]

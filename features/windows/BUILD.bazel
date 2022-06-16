@@ -9,6 +9,7 @@ load(
     "flag_group",
     "flag_set",
 )
+
 package(default_visibility = ["//visibility:public"])
 
 artifact_name(

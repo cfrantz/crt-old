@@ -1,10 +1,11 @@
 package(default_visibility = ["//visibility:public"])
+
 load("@rules_foreign_cc//foreign_cc:configure.bzl", "configure_make")
 load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
 
 filegroup(
     name = "all_srcs",
-    srcs = glob(["**"])
+    srcs = glob(["**"]),
 )
 
 targets = [
@@ -73,9 +74,11 @@ configure_make(
     configure_options = [
         "--target-list={}".format(",".join(targets)),
     ] + [
-        "--enable-{}".format(x) for x in enable
+        "--enable-{}".format(x)
+        for x in enable
     ] + [
-        "--disable-{}".format(x) for x in disable
+        "--disable-{}".format(x)
+        for x in disable
     ],
     lib_source = ":all_srcs",
     out_binaries = binaries,
@@ -89,8 +92,8 @@ filegroup(
 
 pkg_tar(
     name = "qemu-binaries",
-    extension = "tar.xz",
     srcs = [":gen_dir"],
+    extension = "tar.xz",
     package_dir = "qemu",
     strip_prefix = "external/qemu_src/copy_build_qemu/build_qemu",
 )

@@ -14,6 +14,6 @@ DEVICES = [
             "FLOAT_ABI": "soft",
             "ENDIAN": "little",
             "[THUMB]": "-mthumb",
-        }
+        },
     ),
 ]

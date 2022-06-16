@@ -3,9 +3,7 @@ load("@crt//toolchains/gcc_arm_none_eabi:repository.bzl", "gcc_arm_none_eabi_rep
 
 def crt_register_toolchains(
         arm = False,
-        win64 = False,
-    ):
-
+        win64 = False):
     native.register_execution_platforms("@local_config_platform//:host")
     if arm:
         gcc_arm_none_eabi_repos()

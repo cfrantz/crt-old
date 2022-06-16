@@ -28,7 +28,7 @@ LD_ALL_ACTIONS = [
     ACTION_NAMES.cpp_link_executable,
 ]
 
-FeatureSetInfo = provider(fields=["features", "subst"])
+FeatureSetInfo = provider(fields = ["features", "subst"])
 
 def reify_flag_group(
         flags = [],
@@ -40,11 +40,11 @@ def reify_flag_group(
         expand_if_false = None,
         expand_if_equal = None,
         type_name = None,
-        subst={}):
+        subst = {}):
     flags2 = []
     for f in flags:
         if f in subst:
-            if f.startswith('[') and f.endswith(']'):
+            if f.startswith("[") and f.endswith("]"):
                 flags2.extend(subst[f].split("|"))
         else:
             for k, v in subst.items():
@@ -54,18 +54,19 @@ def reify_flag_group(
     return __flag_group(
         flags2,
         flag_groups,
-        iterate_over, 
+        iterate_over,
         expand_if_available,
         expand_if_not_available,
         expand_if_true,
         expand_if_false,
-        expand_if_equal)
+        expand_if_equal,
+    )
 
 def reify_flag_set(
         actions = [],
         with_features = [],
         flag_groups = [],
-type_name = None):
+        type_name = None):
     return __flag_set(
         actions,
         with_features,  # TODO: fix this
@@ -78,18 +79,24 @@ def feature_set_subst(fs, **kwargs):
     features = {}
     for name, feature in fs.features.items():
         flag_sets = [
-            __flag_set(f.actions, f.with_features,
-                [reify_flag_group(
-                    g.flags,
-                    g.flag_groups,
-                    g.iterate_over,
-                    g.expand_if_available,
-                    g.expand_if_not_available,
-                    g.expand_if_true,
-                    g.expand_if_false,
-                    g.expand_if_equal,
-                    subst=subst)
-                for g in f.flag_groups])
+            __flag_set(
+                f.actions,
+                f.with_features,
+                [
+                    reify_flag_group(
+                        g.flags,
+                        g.flag_groups,
+                        g.iterate_over,
+                        g.expand_if_available,
+                        g.expand_if_not_available,
+                        g.expand_if_true,
+                        g.expand_if_false,
+                        g.expand_if_equal,
+                        subst = subst,
+                    )
+                    for g in f.flag_groups
+                ],
+            )
             for f in feature.flag_sets
         ]
         features[name] = __feature(
@@ -114,7 +121,7 @@ def flag_group(
     return {
         "flags": flags,
         "flag_groups": flag_groups,
-        "iterate_over": iterate_over, 
+        "iterate_over": iterate_over,
         "expand_if_available": expand_if_available,
         "expand_if_not_available": expand_if_not_available,
         "expand_if_true": expand_if_true,
@@ -141,17 +148,17 @@ def _feature_impl(ctx):
             requires = ctx.attr.requires,
             implies = ctx.attr.implies,
             provides = ctx.attr.provides,
-        )
+        ),
     ]
 
 feature = rule(
     implementation = _feature_impl,
     attrs = {
-        "enabled": attr.bool(mandatory=True, doc="Whether the feature is enabled."),
-        "flag_sets": attr.string_list(default=[], doc="Flag sets for this feature."),
-        "requires": attr.string_list(default=[], doc="A list of feature sets defining when this feature is supported by the toolchain."),
-        "implies": attr.string_list(default=[], doc="A string list of features or action configs that are automatically enabled when this feature is enabled."),
-        "provides": attr.string_list(default=[], doc="A list of names this feature conflicts with."),
+        "enabled": attr.bool(mandatory = True, doc = "Whether the feature is enabled."),
+        "flag_sets": attr.string_list(default = [], doc = "Flag sets for this feature."),
+        "requires": attr.string_list(default = [], doc = "A list of feature sets defining when this feature is supported by the toolchain."),
+        "implies": attr.string_list(default = [], doc = "A string list of features or action configs that are automatically enabled when this feature is enabled."),
+        "provides": attr.string_list(default = [], doc = "A list of names this feature conflicts with."),
     },
     provides = [FeatureInfo],
 )
@@ -166,18 +173,18 @@ def _feature_set_impl(ctx):
         f = feature[FeatureInfo]
         features[f.name] = f
     subst.update(ctx.attr.substitutions)
+
     #print(json.encode_indent(features))
     return [
-        FeatureSetInfo(features=features, subst=subst)
+        FeatureSetInfo(features = features, subst = subst),
     ]
-
 
 feature_set = rule(
     implementation = _feature_set_impl,
     attrs = {
-        "base": attr.label_list(default=[], providers=[FeatureSetInfo], doc="A base feature set to derive a new set"),
-        "feature": attr.label_list(mandatory=True, providers=[FeatureInfo], doc="A list of features in this set"),
-        "substitutions": attr.string_dict(doc="Substitutions to apply to features"),
+        "base": attr.label_list(default = [], providers = [FeatureSetInfo], doc = "A base feature set to derive a new set"),
+        "feature": attr.label_list(mandatory = True, providers = [FeatureInfo], doc = "A list of features in this set"),
+        "substitutions": attr.string_dict(doc = "Substitutions to apply to features"),
     },
     provides = [FeatureSetInfo],
 )

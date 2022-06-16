@@ -31,7 +31,7 @@ def _platform_runner_impl(ctx):
     params = []
     exclude_external = "false"
     for p in exec_config.params:
-        if 'exclude_external' in p:
+        if "exclude_external" in p:
             exclude_external = "true"
         params.append(p.format(**subst))
 
@@ -53,7 +53,7 @@ def _platform_runner_impl(ctx):
         is_executable = True,
     )
 
-    runfiles = ctx.runfiles(files = runfiles + exec_config.data, transitive_files=cc_toolchain.all_files)
+    runfiles = ctx.runfiles(files = runfiles + exec_config.data, transitive_files = cc_toolchain.all_files)
     runfiles = runfiles.merge(exec_config.program[DefaultInfo].data_runfiles)
     runfiles = runfiles.merge(ctx.attr.binary[DefaultInfo].data_runfiles)
     return DefaultInfo(
@@ -65,9 +65,9 @@ def _platform_runner_impl(ctx):
 platform_runner = platform_rule(
     implementation = _platform_runner_impl,
     attrs = {
-        "binary": attr.label(doc="Program to execute"),
-        "exec_config": attr.label(mandatory=True, providers=[ExecConfigInfo], doc="Execution configuration"),
-        "substitutions": attr.string_dict(doc="Substitutions to apply to the exec_config"),
+        "binary": attr.label(doc = "Program to execute"),
+        "exec_config": attr.label(mandatory = True, providers = [ExecConfigInfo], doc = "Execution configuration"),
+        "substitutions": attr.string_dict(doc = "Substitutions to apply to the exec_config"),
         "_runner": attr.label(
             default = "//rules/scripts:platform_runner.template.bash",
             allow_single_file = True,
@@ -81,9 +81,9 @@ platform_runner = platform_rule(
 platform_test = platform_rule(
     implementation = _platform_runner_impl,
     attrs = {
-        "binary": attr.label(doc="Program to execute"),
-        "exec_config": attr.label(mandatory=True, providers=[ExecConfigInfo], doc="Execution configuration"),
-        "substitutions": attr.string_dict(doc="Substitutions to apply to the exec_config"),
+        "binary": attr.label(doc = "Program to execute"),
+        "exec_config": attr.label(mandatory = True, providers = [ExecConfigInfo], doc = "Execution configuration"),
+        "substitutions": attr.string_dict(doc = "Substitutions to apply to the exec_config"),
         "_runner": attr.label(
             default = "//rules/scripts:platform_runner.template.bash",
             allow_single_file = True,

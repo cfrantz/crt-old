@@ -1,4 +1,4 @@
-ExecConfigInfo = provider(fields=["program", "params", "data", "preparation", "substitutions"])
+ExecConfigInfo = provider(fields = ["program", "params", "data", "preparation", "substitutions"])
 
 def _exec_config_impl(ctx):
     return [ExecConfigInfo(
@@ -17,11 +17,9 @@ exec_config = rule(
             executable = True,
             cfg = "exec",
         ),
-        "data": attr.label_list(allow_files=True, doc="Files needed at runtime."),
-        "params": attr.string_list(doc="Parameters for the program"),
-        "preparation": attr.string(default="none", values=["none", "windows"], doc="Special preparation type"),
-        "substitutions": attr.string_dict(doc="Substitutions to apply at runtime"),
+        "data": attr.label_list(allow_files = True, doc = "Files needed at runtime."),
+        "params": attr.string_list(doc = "Parameters for the program"),
+        "preparation": attr.string(default = "none", values = ["none", "windows"], doc = "Special preparation type"),
+        "substitutions": attr.string_dict(doc = "Substitutions to apply at runtime"),
     },
 )
-
-
