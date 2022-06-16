@@ -13,9 +13,9 @@ exec_config(
     program = "@qemu//:qemu-system-arm",
     params = [
         "-semihosting",
-        "-M", "lm3s811evb",
-        "-m", "8K",
+        "-M lm3s811evb",
+        "-m 8K",
         "-nographic",
-        "-kernel", "{binary}",
+        "-kernel {binary}",
     ],
 )

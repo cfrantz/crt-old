@@ -13,16 +13,16 @@ exec_config(
     name = "qemu_windows",
     program = "@qemu//:qemu-system-x86_64",
     params = [
-        "-M", "pc",
-        "-m", "{memory}",
+        "-M pc",
+        "-m {memory}",
         "{nographic}",
         "{monitor}",
-        "-usb", "-device", "usb-tablet",
-        "-hda", "{disk_image_snapshot}",
+        "-usb -device usb-tablet",
+        "-hda {disk_image_snapshot}",
         # Writing to qemu's vvfat filesystem is slow and unreliable.
         # We set up windows COM ports to capture stdout, stderr and
         # the program's exit code.
-        "-drive", "file=fat:rw:$PWD/exclude_external,format=raw",
+        "-drive file=fat:rw:$PWD/exclude_external,format=raw",
         "-chardev file,id=com3,path={exitcode}",
         "-serial file:{stdout}",
         "-serial file:{stderr}",
