@@ -16,9 +16,16 @@ PARAM_DEFAULTS = {
     "abi_libc_version": "unknown",
 }
 
-def isystemize(paths = []):
-    paths = ["-isystem" + p for p in paths]
+def listify_flags(flag, paths = []):
+    paths = [flag.format(p) for p in paths]
     return "|".join(paths)
+
+def union(*args, **kwargs):
+    d = {}
+    for a in args:
+        d.update(a)
+    d.update(kwargs)
+    return d
 
 def _toolchain_config_impl(ctx):
     tool_paths = [
@@ -90,10 +97,11 @@ def setup(
         compiler_components,
         include_directories,
         constraints,
+        isystem = "-isystem{}",
         substitutions = {},
         params = {}):
     subst = {
-        "[SYSTEM_INCLUDES]": isystemize(include_directories),
+        "[SYSTEM_INCLUDES]": listify_flags(isystem, include_directories),
     }
     subst.update(substitutions)
 

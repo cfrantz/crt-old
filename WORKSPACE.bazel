@@ -7,3 +7,5 @@ crt_deps()
 
 load("//third_party/qemu:repos.bzl", "qemu_src_repos")
 qemu_src_repos()
+load("//third_party/cc65:repos.bzl", "cc65_src_repos")
+cc65_src_repos()

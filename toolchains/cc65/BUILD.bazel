@@ -1,0 +1,46 @@
+load("//config:compiler.bzl", "setup", "union")
+load("//platforms/m6502:devices.bzl", "DEVICES")
+
+package(default_visibility = ["//visibility:public"])
+
+SYSTEM_INCLUDE_PATHS = [
+    "external/cc65_files/share/cc65/include",
+]
+
+filegroup(
+    name = "compiler_components",
+    srcs = [
+        "//toolchains/cc65/wrappers:all",
+        "@cc65_files//:all",
+    ],
+)
+
+[setup(
+    name = device.name,
+    architecture = device.architecture,
+    artifact_naming = device.artifact_naming,
+    compiler_components = ":compiler_components",
+    constraints = device.constraints,
+    feature_set = device.feature_set,
+    include_directories = SYSTEM_INCLUDE_PATHS,
+    isystem = "-I{}",
+    params = {
+        "compiler": "cc65",
+    },
+    substitutions = union(
+        device.substitutions,
+        {
+            "[ASM_INCLUDES]": "--asm-include-dir|external/cc65_files/share/cc65/asminc",
+            "[SYSTEM_LIBRARY_PATHS]": "-Lexternal/cc65_files/share/cc65/lib",
+        },
+    ),
+    tools = {
+        "ar": "wrappers/ar",
+        "cpp": "wrappers/cpp",
+        "gcc": "wrappers/gcc",
+        "ld": "wrappers/ld",
+        "nm": "wrappers/nm",
+        "objdump": "wrappers/objdump",
+        "strip": "wrappers/strip",
+    },
+) for device in DEVICES]
