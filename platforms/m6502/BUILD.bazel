@@ -1,0 +1,9 @@
+package(default_visibility = ["//visibility:public"])
+
+platform(
+    name = "nintendo-nes",
+    constraint_values = [
+        "//antique/cpu:m6502",
+        "@platforms//os:none",
+    ],
+)

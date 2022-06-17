@@ -1,0 +1,44 @@
+package(default_visibility = ["//visibility:public"])
+
+load("@rules_foreign_cc//foreign_cc:make.bzl", "make")
+load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
+
+filegroup(
+    name = "all_srcs",
+    srcs = glob(["**"]),
+)
+
+binaries = [
+    "ar65",
+    "ca65",
+    "cc65",
+    "chrcvt65",
+    "cl65",
+    "co65",
+    "da65",
+    "grc65",
+    "ld65",
+    "od65",
+    "sim65",
+    "sp65",
+]
+
+make(
+    name = "build_cc65",
+    lib_source = ":all_srcs",
+    out_binaries = binaries,
+)
+
+filegroup(
+    name = "gen_dir",
+    srcs = [":build_cc65"],
+    output_group = "gen_dir",
+)
+
+pkg_tar(
+    name = "cc65-binaries",
+    srcs = [":gen_dir"],
+    extension = "tar.xz",
+    package_dir = "cc65",
+    strip_prefix = "external/cc65_src/copy_build_cc65/build_cc65",
+)
