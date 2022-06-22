@@ -1,4 +1,3 @@
-
 #!/bin/bash --norc
 
 PROG=$(basename "$0")
