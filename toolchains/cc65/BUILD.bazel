@@ -30,12 +30,18 @@ filegroup(
     substitutions = union(
         device.substitutions,
         {
-            "[ASM_INCLUDES]": listify_flags("--asm-include-dir|{}", [
+            "[ASM_INCLUDES]": listify_flags(
+                "--asm-include-dir|{}",
+                [
                     "external/cc65_files/share/cc65/asminc",
-            ]),
-            "[SYSTEM_LIBRARY_PATHS]": listify_flags("-L{}", [
+                ],
+            ),
+            "[SYSTEM_LIBRARY_PATHS]": listify_flags(
+                "-L{}",
+                [
                     "external/cc65_files/share/cc65/lib",
-            ]),
+                ],
+            ),
         },
     ),
     tools = {
