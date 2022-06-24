@@ -4,6 +4,7 @@ platform(
     name = "nintendo-nes",
     constraint_values = [
         "//antique/cpu:m6502",
+        "//antique/product:nes",
         "@platforms//os:none",
     ],
 )

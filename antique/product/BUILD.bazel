@@ -1,0 +1,8 @@
+package(default_visibility = ["//visibility:public"])
+
+constraint_setting(name = "product")
+
+constraint_value(
+    name = "nes",
+    constraint_setting = ":product",
+)

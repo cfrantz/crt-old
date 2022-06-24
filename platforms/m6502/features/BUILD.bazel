@@ -13,6 +13,23 @@ load(
 package(default_visibility = ["//visibility:public"])
 
 feature(
+    name = "architecture",
+    enabled = True,
+    flag_sets = [
+        flag_set(
+            actions = C_ALL_COMPILE_ACTIONS + LD_ALL_ACTIONS,
+            flag_groups = [
+                flag_group(
+                    flags = [
+                        "[TARGET]",
+                    ],
+                ),
+            ],
+        ),
+    ],
+)
+
+feature(
     name = "includes",
     enabled = True,
     flag_sets = [
@@ -239,6 +256,7 @@ feature(
 feature_set(
     name = "cc65",
     feature = [
+        ":architecture",
         ":includes",
         ":include_paths",
         ":dependency_file",

@@ -1,4 +1,4 @@
-load("//config:compiler.bzl", "setup", "union")
+load("//config:compiler.bzl", "listify_flags", "setup", "union")
 load("//platforms/m6502:devices.bzl", "DEVICES")
 
 package(default_visibility = ["//visibility:public"])
@@ -30,8 +30,12 @@ filegroup(
     substitutions = union(
         device.substitutions,
         {
-            "[ASM_INCLUDES]": "--asm-include-dir|external/cc65_files/share/cc65/asminc",
-            "[SYSTEM_LIBRARY_PATHS]": "-Lexternal/cc65_files/share/cc65/lib",
+            "[ASM_INCLUDES]": listify_flags("--asm-include-dir|{}", [
+                    "external/cc65_files/share/cc65/asminc",
+            ]),
+            "[SYSTEM_LIBRARY_PATHS]": listify_flags("-L{}", [
+                    "external/cc65_files/share/cc65/lib",
+            ]),
         },
     ),
     tools = {
