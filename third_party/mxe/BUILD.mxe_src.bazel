@@ -1,0 +1,74 @@
+package(default_visibility = ["//visibility:public"])
+
+load("@rules_foreign_cc//foreign_cc:make.bzl", "make")
+load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
+
+filegroup(
+    name = "all_srcs",
+    srcs = glob(["**"]),
+)
+
+binaries = [
+    "x86_64-w64-mingw32.shared-addr2line",
+    "x86_64-w64-mingw32.shared-ar",
+    "x86_64-w64-mingw32.shared-as",
+    "x86_64-w64-mingw32.shared-c++",
+    "x86_64-w64-mingw32.shared-c++filt",
+    "x86_64-w64-mingw32.shared-cpp",
+    "x86_64-w64-mingw32.shared-dlltool",
+    "x86_64-w64-mingw32.shared-dllwrap",
+    "x86_64-w64-mingw32.shared-elfedit",
+    "x86_64-w64-mingw32.shared-g++",
+    "x86_64-w64-mingw32.shared-gcc",
+    "x86_64-w64-mingw32.shared-gcc-11.3.0",
+    "x86_64-w64-mingw32.shared-gcc-ar",
+    "x86_64-w64-mingw32.shared-gcc-nm",
+    "x86_64-w64-mingw32.shared-gcc-ranlib",
+    "x86_64-w64-mingw32.shared-gcov",
+    "x86_64-w64-mingw32.shared-gcov-dump",
+    "x86_64-w64-mingw32.shared-gcov-tool",
+    "x86_64-w64-mingw32.shared-gfortran",
+    "x86_64-w64-mingw32.shared-gprof",
+    "x86_64-w64-mingw32.shared-ld",
+    "x86_64-w64-mingw32.shared-ld.bfd",
+    "x86_64-w64-mingw32.shared-lto-dump",
+    "x86_64-w64-mingw32.shared-nm",
+    "x86_64-w64-mingw32.shared-objcopy",
+    "x86_64-w64-mingw32.shared-objdump",
+    "x86_64-w64-mingw32.shared-pkg-config",
+    "x86_64-w64-mingw32.shared-ranlib",
+    "x86_64-w64-mingw32.shared-readelf",
+    "x86_64-w64-mingw32.shared-size",
+    "x86_64-w64-mingw32.shared-strings",
+    "x86_64-w64-mingw32.shared-strip",
+    "x86_64-w64-mingw32.shared-windmc",
+    "x86_64-w64-mingw32.shared-windres",
+]
+
+make(
+    name = "cc",
+    args = [
+        "MXE_TARGETS='x86_64-w64-mingw32.shared'",
+    ],
+    lib_source = ":all_srcs",
+    out_binaries = binaries,
+    tags = [
+        "no-sandbox",
+        "requires-network",
+    ],
+    targets = ["cc"],
+)
+
+filegroup(
+    name = "gen_dir",
+    srcs = [":cc"],
+    output_group = "gen_dir",
+)
+
+pkg_tar(
+    name = "mxe-binaries",
+    srcs = [":gen_dir"],
+    extension = "tar.xz",
+    package_dir = "mxe",
+    strip_prefix = "external/mxe_src/copy_cc/cc",
+)

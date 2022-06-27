@@ -1,0 +1,119 @@
+diff --git a/src/gcc-1-fixes.patch b/src/gcc-1-fixes.patch
+index 803179bf..71a557ef 100644
+--- a/src/gcc-1-fixes.patch
++++ b/src/gcc-1-fixes.patch
+@@ -1,19 +1,36 @@
+-This file is part of MXE. See LICENSE.md for licensing information.
+-
+-Contains ad hoc patches for cross building.
+-
+-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+-From: Tony Theodore <tonyt@logyst.com>
+-Date: Sun, 10 May 2020 15:06:47 +1000
+-Subject: [PATCH 1/3] allow native cpu detection when building with clang
+-
+-function was disabled for non-gcc5 in:
+-https://gcc.gnu.org/git/?p=gcc.git;a=commitdiff;h=b587c12551143c14f023860a1dbdf7316ae71f27;hp=43096b526a9f23008b9769372f11475ae63487bc
+-
+-clang can build it correctly and this should probably be a feature test
+-
++diff --git a/gcc/Makefile.in b/gcc/Makefile.in
++index 7bfd6ce65..f292f93a3 100644
++--- a/gcc/Makefile.in
+++++ b/gcc/Makefile.in
++@@ -3671,9 +3671,11 @@ install-plugin: installdirs lang.install-plugin s-header-vars install-gengtype
++ # We keep the directory structure for files in config, common/config or
++ # c-family and .def files. All other files are flattened to a single directory.
++ 	$(mkinstalldirs) $(DESTDIR)$(plugin_includedir)
++-	headers=`echo $(PLUGIN_HEADERS) $$(cd $(srcdir); echo *.h *.def) | tr ' ' '\012' | sort -u`; \
+++	$(file >/tmp/gcc-headers.txt) $(foreach H,$(PLUGIN_HEADERS),$(file >>/tmp/gcc-headers.txt,$H))
+++	$$(cd $(srcdir); ls *.h *.def >>/tmp/gcc-headers.txt)
+++	$$(sort -u </tmp/gcc-headers.txt >/tmp/sorted-gcc-headers.txt)
++ 	srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*|]/\\\\&/g'`; \
++-	for file in $$headers; do \
+++	for file in $$(cat /tmp/sorted-gcc-headers.txt); do \
++ 	  if [ -f $$file ] ; then \
++ 	    path=$$file; \
++ 	  elif [ -f $(srcdir)/$$file ]; then \
++diff --git a/gcc/config.gcc b/gcc/config.gcc
++index 5636acc22..e8da44e64 100644
++--- a/gcc/config.gcc
+++++ b/gcc/config.gcc
++@@ -2209,7 +2209,7 @@ i[34567]86-*-mingw* | x86_64-*-mingw*)
++ 			tmake_file="${tmake_file} i386/t-mingw-w32"
++ 			;;
++ 	esac
++-        native_system_header_dir=/mingw/include
+++        native_system_header_dir=/include
++ 	target_gtfiles="$target_gtfiles \$(srcdir)/config/i386/winnt.c"
++ 	extra_options="${extra_options} i386/cygming.opt i386/mingw.opt"
++ 	case ${target} in
+ diff --git a/gcc/config/i386/driver-i386.c b/gcc/config/i386/driver-i386.c
+-index 1111111..2222222 100644
++index f844a168d..45d2a083d 100644
+ --- a/gcc/config/i386/driver-i386.c
+ +++ b/gcc/config/i386/driver-i386.c
+ @@ -26,7 +26,7 @@ along with GCC; see the file COPYING3.  If not see
+@@ -25,31 +42,11 @@ index 1111111..2222222 100644
+  #include "cpuid.h"
+  #include "common/config/i386/cpuinfo.h"
+  #include "common/config/i386/i386-isas.h"
+-
+-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+-From: Tony Theodore <tonyt@logyst.com>
+-Date: Sun, 10 May 2020 15:09:58 +1000
+-Subject: [PATCH 2/3] remove hard-coded mingw from paths
+-
+-
+-diff --git a/gcc/config.gcc b/gcc/config.gcc
+-index 1111111..2222222 100644
+---- a/gcc/config.gcc
+-+++ b/gcc/config.gcc
+-@@ -2207,7 +2207,7 @@ i[34567]86-*-mingw* | x86_64-*-mingw*)
+- 			tmake_file="${tmake_file} i386/t-mingw-w32"
+- 			;;
+- 	esac
+--        native_system_header_dir=/mingw/include
+-+        native_system_header_dir=/include
+- 	target_gtfiles="$target_gtfiles \$(srcdir)/config/i386/winnt.c"
+- 	extra_options="${extra_options} i386/cygming.opt i386/mingw.opt"
+- 	case ${target} in
+ diff --git a/gcc/config/i386/mingw32.h b/gcc/config/i386/mingw32.h
+-index 1111111..2222222 100644
++index 779c93357..9949afbbe 100644
+ --- a/gcc/config/i386/mingw32.h
+ +++ b/gcc/config/i386/mingw32.h
+-@@ -198,7 +198,7 @@ along with GCC; see the file COPYING3.  If not see
++@@ -206,7 +206,7 @@ along with GCC; see the file COPYING3.  If not see
+  
+  /* Override startfile prefix defaults.  */
+  #ifndef STANDARD_STARTFILE_PREFIX_1
+@@ -58,7 +55,7 @@ index 1111111..2222222 100644
+  #endif
+  #ifndef STANDARD_STARTFILE_PREFIX_2
+  #define STANDARD_STARTFILE_PREFIX_2 ""
+-@@ -207,7 +207,7 @@ along with GCC; see the file COPYING3.  If not see
++@@ -215,7 +215,7 @@ along with GCC; see the file COPYING3.  If not see
+  /* For native mingw-version we need to take care that NATIVE_SYSTEM_HEADER_DIR
+     macro contains POSIX-style path.  See bug 52947.  */
+  #undef NATIVE_SYSTEM_HEADER_DIR
+@@ -67,18 +64,8 @@ index 1111111..2222222 100644
+  
+  /* Output STRING, a string representing a filename, to FILE.
+     We canonicalize it to be in Unix format (backslashes are replaced
+-
+-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+-From: Liu Hao <lh_mouse@126.com>
+-Date: Wed, 6 May 2020 21:49:18 +0800
+-Subject: [PATCH 3/3] libgomp: Don't hard-code MS printf attributes
+-
+-Source: https://github.com/msys2/MINGW-packages/blob/9501ee2afc8d01dc7d85383e4b22e91c30d93ca7/mingw-w64-gcc/0020-libgomp-Don-t-hard-code-MS-printf-attributes.patch
+-
+-Following discussion at https://www.spinics.net/lists/gcchelp/msg51246.html
+-
+ diff --git a/libgomp/libgomp.h b/libgomp/libgomp.h
+-index 1111111..2222222 100644
++index ef1bb4907..30fd2aae1 100644
+ --- a/libgomp/libgomp.h
+ +++ b/libgomp/libgomp.h
+ @@ -69,6 +69,14 @@
