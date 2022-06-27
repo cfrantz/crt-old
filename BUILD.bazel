@@ -1,9 +1,20 @@
 package(default_visibility = ["//visibility:public"])
 
+load("//third_party/github:rules.bzl", "release")
+
 filegroup(
     name = "release-artifacts",
     srcs = [
         "@mxe_src//:mxe-binaries",
         "@qemu_src//:qemu-binaries",
     ],
+)
+
+release(
+    name = "release",
+    artifacts = {
+        #"@mxe_src//:mxe-binaries": "MXE mingw64 compiler",
+        #"@qemu_src//:qemu-binaries": "QEMU system emulator",
+        "README.md": "Readme",
+    },
 )
