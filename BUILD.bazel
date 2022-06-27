@@ -1,1 +1,9 @@
 package(default_visibility = ["//visibility:public"])
+
+filegroup(
+    name = "release-artifacts",
+    srcs = [
+        "@mxe_src//:mxe-binaries",
+        "@qemu_src//:qemu-binaries",
+    ],
+)
