@@ -15,9 +15,9 @@ def qemu_binary_repos():
     http_archive(
         name = "qemu",
         urls = [
-            "https://github.com/cfrantz/crt/releases/download/qemu-prerelease/qemu-binaries.tar.xz",
+            "https://github.com/cfrantz/crt/releases/download//qemu-binaries.tar.xz",
         ],
-        sha256 = "2f97d209afab56e47ca217c3c0ffbac0cdef2b8f9777d59fab9833d5776c4e08",
+        sha256 = "${DIGEST[qemu-binaries.tar.xz]}",
         build_file = Label("//third_party/qemu:BUILD.qemu.bazel"),
         strip_prefix = "qemu",
     )
