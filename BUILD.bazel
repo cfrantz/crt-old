@@ -13,8 +13,22 @@ filegroup(
 release(
     name = "release",
     artifacts = {
-        #"@mxe_src//:mxe-binaries": "MXE mingw64 compiler",
-        #"@qemu_src//:qemu-binaries": "QEMU system emulator",
-        "README.md": "Readme",
+        "@mxe_src//:mxe-binaries": "MXE mingw64 compiler",
+        "@qemu_src//:qemu-binaries": "QEMU system emulator",
     },
+    script = """(
+        cd "${BUILD_WORKSPACE_DIRECTORY}"
+        envsubst \
+                <toolchains/gcc_mxe_mingw64/repository.bzl.template \
+                >toolchains/gcc_mxe_mingw64/repository.bzl
+        # Apparently envsubst can't handle bash arrays or dicts.
+        SHA256=${DIGEST[qemu-binaries.tar.xz]} envsubst \
+                <third_party/qemu/repos.bzl.template \
+                >third_party/qemu/repos.bzl
+        git commit -m "Update tags and hashes for ${RELEASE_TAG}" \
+                toolchains/gcc_mxe_mingw64/repository.bzl \
+                third_party/qemu/repos.bzl
+        git tag -f "${RELEASE_TAG}"
+        git push ${REMOTE} ${RELEASE_TAG} --follow-tags
+    )"""
 )

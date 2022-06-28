@@ -6,7 +6,7 @@ def _release_impl(ctx):
         if len(files) > 1:
             fail("Artifacts must produce a single file")
         runfiles.extend(files)
-        artifacts.append("'{}#{}'".format(files[0].path, v))
+        artifacts.append("'{}#{}'".format(files[0].short_path, v))
 
     runner = ctx.actions.declare_file(ctx.label.name + ".bash")
     ctx.actions.expand_template(
@@ -15,6 +15,8 @@ def _release_impl(ctx):
         is_executable = True,
         substitutions = {
             "@@ARTIFACTS@@": " ".join(artifacts),
+            "@@FILES@@": " ".join([f.short_path for f in runfiles]),
+            "@@SCRIPT@@": ctx.attr.script,
             "@@GH@@": ctx.executable._gh.path,
         },
     )
@@ -31,6 +33,13 @@ release = rule(
         "artifacts": attr.label_keyed_string_dict(
             doc = "Mapping of release artifacts to their text descriptions",
             allow_files = True,
+        ),
+        "remote": attr.string(
+            default = "origin",
+            doc = "The remote to push the release tag to",
+        ),
+        "script": attr.string(
+            doc = "Script operation to perform before the github release operation",
         ),
         "_gh": attr.label(
             default = "@com_github_gh//:gh",
