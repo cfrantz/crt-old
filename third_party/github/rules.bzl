@@ -16,6 +16,7 @@ def _release_impl(ctx):
         substitutions = {
             "@@ARTIFACTS@@": " ".join(artifacts),
             "@@FILES@@": " ".join([f.short_path for f in runfiles]),
+            "@@REMOTE@@": ctx.attr.remote,
             "@@SCRIPT@@": ctx.attr.script,
             "@@GH@@": ctx.executable._gh.path,
         },
