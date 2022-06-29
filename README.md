@@ -59,8 +59,9 @@ In your `WORKSPACE` file, add:
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 http_archive(
     name = "crt",
-    url = "...",
-    sha256 = "...",
+    url = "https://github.com/cfrantz/crt/archive/refs/tags/v0.1.8.tar.gz",
+    sha256 = "d2381b6f6b08682794d65c74e24c93852fcdfe10f102cd9b921fe5d9e7fd0cad",
+    strip_prefix = "crt-0.1.8",
 )
 
 load("@crt//:repos.bzl", "crt_repos")
