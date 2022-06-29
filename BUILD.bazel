@@ -33,5 +33,5 @@ release(
                 third_party/qemu/repos.bzl
         git tag -f "${RELEASE_TAG}"
         git push ${REMOTE} ${RELEASE_TAG} --follow-tags
-    )"""
+    )""",
 )

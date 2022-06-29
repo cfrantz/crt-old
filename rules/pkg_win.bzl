@@ -35,7 +35,7 @@ pkg_win = platform_rule(
         "skip_dlls": attr.string_list(
             doc = "Names of DLLs that can be ignored in dependency analysis",
         ),
-        "platform" : attr.string(
+        "platform": attr.string(
             default = "@crt//platforms/x86_64:win64",
             doc = "The target platform",
         ),
