@@ -7,6 +7,7 @@ FILES=(@@FILES@@)
 GH=@@GH@@
 REMOTE="@@REMOTE@@"
 
+BRANCH=$(cd "$BUILD_WORKSPACE_DIRECTORY" && git branch --show-current)
 RELEASE_TAG=$(cd "$BUILD_WORKSPACE_DIRECTORY" && git describe --abbrev=0 --tags)
 
 if $(${GH} release list | egrep -q "\s${RELEASE_TAG}\s"); then
@@ -22,7 +23,7 @@ for f in "${FILES[@]}"; do
     DIGEST[${b}]=$(sha256sum ${f} | cut -f1 -d' ')
 done
 
-export ARTIFACTS FILES GH REMOTE RELEASE_TAG DIGEST
+export ARTIFACTS BRANCH FILES GH REMOTE RELEASE_TAG DIGEST
 @@SCRIPT@@
 
-${GH} release create "$@" "${RELEASE_TAG}" "${ARTIFACTS[@]}"
+${GH} release create --target="${BRANCH}" "$@" "${RELEASE_TAG}" "${ARTIFACTS[@]}"
