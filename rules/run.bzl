@@ -1,3 +1,7 @@
+# Copyright lowRISC contributors.
+# Licensed under the Apache License, Version 2.0, see LICENSE for details.
+# SPDX-License-Identifier: Apache-2.0
+
 load("@rules_cc//cc:find_cc_toolchain.bzl", "find_cc_toolchain")
 load("//config:execution.bzl", "ExecConfigInfo")
 load("//rules:transition.bzl", "platform_rule")

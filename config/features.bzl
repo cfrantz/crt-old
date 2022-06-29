@@ -1,3 +1,7 @@
+# Copyright lowRISC contributors.
+# Licensed under the Apache License, Version 2.0, see LICENSE for details.
+# SPDX-License-Identifier: Apache-2.0
+
 load(
     "@bazel_tools//tools/cpp:cc_toolchain_config_lib.bzl",
     "FeatureInfo",

@@ -1,3 +1,7 @@
+# Copyright lowRISC contributors.
+# Licensed under the Apache License, Version 2.0, see LICENSE for details.
+# SPDX-License-Identifier: Apache-2.0
+
 ExecConfigInfo = provider(fields = ["program", "params", "data", "preparation", "substitutions"])
 
 def _exec_config_impl(ctx):
