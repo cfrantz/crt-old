@@ -8,6 +8,7 @@ def _release_impl(ctx):
         runfiles.extend(files)
         artifacts.append("'{}#{}'".format(files[0].short_path, v))
 
+    env = "\n".join(["export {}=\"{}\"".format(k, v) for k, v in ctx.attr.env.items()])
     runner = ctx.actions.declare_file(ctx.label.name + ".bash")
     ctx.actions.expand_template(
         template = ctx.file._runner,
@@ -15,6 +16,7 @@ def _release_impl(ctx):
         is_executable = True,
         substitutions = {
             "@@ARTIFACTS@@": " ".join(artifacts),
+            "@@ENV@@": env,
             "@@FILES@@": " ".join([f.short_path for f in runfiles]),
             "@@REMOTE@@": ctx.attr.remote,
             "@@SCRIPT@@": ctx.attr.script,
@@ -41,6 +43,9 @@ release = rule(
         ),
         "script": attr.string(
             doc = "Script operation to perform before the github release operation",
+        ),
+        "env": attr.string_dict(
+            doc = "Additional environment variables for the script",
         ),
         "_gh": attr.label(
             default = "@com_github_gh//:gh",

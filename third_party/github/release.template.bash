@@ -6,6 +6,7 @@ ARTIFACTS=(@@ARTIFACTS@@)
 FILES=(@@FILES@@)
 GH=@@GH@@
 REMOTE="@@REMOTE@@"
+@@ENV@@
 
 BRANCH=$(cd "$BUILD_WORKSPACE_DIRECTORY" && git branch --show-current)
 RELEASE_TAG=$(cd "$BUILD_WORKSPACE_DIRECTORY" && git describe --abbrev=0 --tags)

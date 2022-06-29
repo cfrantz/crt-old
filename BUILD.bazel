@@ -16,12 +16,15 @@ release(
         "@mxe_src//:mxe-binaries": "MXE mingw64 compiler",
         "@qemu_src//:qemu-binaries": "QEMU system emulator",
     },
+    env = {
+        "BASE_URL": "https://github.com/cfrantz/crt",
+    },
     script = """(
         cd "${BUILD_WORKSPACE_DIRECTORY}"
-        envsubst \
+        # Apparently envsubst can't handle bash arrays or dicts.
+        SHA256=${DIGEST[mxe-binaries.tar.xz]} envsubst \
                 <toolchains/gcc_mxe_mingw64/repository.bzl.template \
                 >toolchains/gcc_mxe_mingw64/repository.bzl
-        # Apparently envsubst can't handle bash arrays or dicts.
         SHA256=${DIGEST[qemu-binaries.tar.xz]} envsubst \
                 <third_party/qemu/repos.bzl.template \
                 >third_party/qemu/repos.bzl
