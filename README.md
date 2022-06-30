@@ -77,7 +77,7 @@ crt_register_toolchains(
 )
 ```
 
-### Releasing CRT
+## Releasing CRT
 
 To perform a release of CRT:
 
