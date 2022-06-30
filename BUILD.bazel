@@ -29,6 +29,7 @@ release(
                 <third_party/qemu/repos.bzl.template \
                 >third_party/qemu/repos.bzl
         git commit -m "Update tags and hashes for ${RELEASE_TAG}" \
+                toolchains/cc65/repository.bzl \
                 toolchains/gcc_mxe_mingw64/repository.bzl \
                 third_party/qemu/repos.bzl
         git tag -f "${RELEASE_TAG}"
