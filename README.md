@@ -72,6 +72,7 @@ crt_deps()
 load("@crt//config:registration.bzl", "crt_register_toolchains")
 crt_register_toolchains(
     arm = True,     # Pick the toolchains you want.
+    m6502 = True,
     riscv32 = True,
     win64 = True,
 )
