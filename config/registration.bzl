@@ -28,7 +28,6 @@ def crt_register_toolchains(
         native.register_execution_platforms("@crt//platforms/riscv32:all")
         native.register_toolchains("@crt//toolchains/lowrisc_rv32imcb:all")
 
-
     if win64:
         gcc_mxe_mingw64_repos()
         native.register_execution_platforms("@crt//platforms/x86_64:all")
