@@ -35,7 +35,7 @@ filegroup(
         device.substitutions,
         {
             "[ASM_INCLUDES]": listify_flags(
-                "--asm-include-dir|{}",
+                "--asm-include-dir {}",
                 [
                     "external/cc65_files/share/cc65/asminc",
                 ],

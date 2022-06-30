@@ -20,9 +20,12 @@ PARAM_DEFAULTS = {
     "abi_libc_version": "unknown",
 }
 
-def listify_flags(flag, paths = []):
-    paths = [flag.format(p) for p in paths]
-    return "|".join(paths)
+def listify_flags(flag, args = [], spaces_in_args=False):
+    args = [flag.format(p) for p in args]
+    value = "|".join(args)
+    if not spaces_in_args:
+        value = value.replace(' ', '|')
+    return value
 
 def union(*args, **kwargs):
     d = {}
