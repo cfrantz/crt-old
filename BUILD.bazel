@@ -6,17 +6,10 @@ package(default_visibility = ["//visibility:public"])
 
 load("//third_party/github:rules.bzl", "release")
 
-filegroup(
-    name = "release-artifacts",
-    srcs = [
-        "@mxe_src//:mxe-binaries",
-        "@qemu_src//:qemu-binaries",
-    ],
-)
-
 release(
     name = "release",
     artifacts = {
+        "@cc65_src//:cc65-binaries": "cc65 compiler",
         "@mxe_src//:mxe-binaries": "MXE mingw64 compiler",
         "@qemu_src//:qemu-binaries": "QEMU system emulator",
     },
@@ -26,6 +19,9 @@ release(
     script = """(
         cd "${BUILD_WORKSPACE_DIRECTORY}"
         # Apparently envsubst can't handle bash arrays or dicts.
+        SHA256=${DIGEST[cc65-binaries.tar.xz]} envsubst \
+                <toolchains/cc65/repository.bzl.template \
+                >toolchains/cc65/repository.bzl
         SHA256=${DIGEST[mxe-binaries.tar.xz]} envsubst \
                 <toolchains/gcc_mxe_mingw64/repository.bzl.template \
                 >toolchains/gcc_mxe_mingw64/repository.bzl
