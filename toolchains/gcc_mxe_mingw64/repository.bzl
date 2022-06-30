@@ -7,7 +7,7 @@ load("@crt//config:repo.bzl", "compiler_repository")
 def gcc_mxe_mingw64_repos():
     compiler_repository(
         name = "gcc_mxe_mingw64_files",
-        url = "https://github.com/cfrantz/crt/releases/download/v0.1.9-cc65/mxe-binaries.tar.xz",
-        sha256 = "37e990d99366f2fafd65411535c422066aaed3c0dcd5e2ac06446f500dfb2dc8",
+        url = "https://github.com/cfrantz/crt/releases/download/v0.1.9/mxe-binaries.tar.xz",
+        sha256 = "de48f57e64ae6c86da45fac614c5fdc37f5950b9f90ad24fbc20be7464caf1a9",
         strip_prefix = "mxe",
     )
