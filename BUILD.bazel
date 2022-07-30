@@ -14,7 +14,7 @@ release(
         "@qemu_src//:qemu-binaries": "QEMU system emulator",
     },
     env = {
-        "BASE_URL": "https://github.com/cfrantz/crt",
+        "BASE_URL": "https://github.com/lowRISC/crt",
     },
     script = """(
         cd "${BUILD_WORKSPACE_DIRECTORY}"
