@@ -18,6 +18,7 @@ release(
     },
     script = """(
         cd "${BUILD_WORKSPACE_DIRECTORY}"
+
         # Apparently envsubst can't handle bash arrays or dicts.
         SHA256=${DIGEST[cc65-binaries.tar.xz]} envsubst \
                 <toolchains/cc65/repository.bzl.template \
@@ -28,11 +29,17 @@ release(
         SHA256=${DIGEST[qemu-binaries.tar.xz]} envsubst \
                 <third_party/qemu/repos.bzl.template \
                 >third_party/qemu/repos.bzl
+
+        # Update modified hashes.
         git commit -m "Update tags and hashes for ${RELEASE_TAG}" \
                 toolchains/cc65/repository.bzl \
                 toolchains/gcc_mxe_mingw64/repository.bzl \
                 third_party/qemu/repos.bzl
+
+        # Move the tag after the commit.
         git tag -f "${RELEASE_TAG}"
-        git push ${REMOTE} ${RELEASE_TAG} --follow-tags
+
+        # Push the updated commit and tag to the remote.
+        git push --atomic "${REMOTE}" "${BRANCH}" "${RELEASE_TAG}"
     )""",
 )
