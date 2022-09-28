@@ -3,8 +3,8 @@
 # Licensed under the Apache License, Version 2.0, see LICENSE for details.
 # SPDX-License-Identifier: Apache-2.0
 
-PROG=$(basename "$0")
-DRIVER_DIR=$(dirname "$0")
+PROG=${0##*/}
+DRIVER_DIR=${0%/*}
 MXE="gcc_mxe_mingw64_files"
 VERSION="11.3.0"
 PREFIX="x86_64-w64-mingw32.shared"
