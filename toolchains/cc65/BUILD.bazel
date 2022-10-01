@@ -38,6 +38,7 @@ filegroup(
                 "--asm-include-dir {}",
                 [
                     "external/cc65_files/share/cc65/asminc",
+                    ".",
                 ],
             ),
             "[SYSTEM_LIBRARY_PATHS]": listify_flags(
