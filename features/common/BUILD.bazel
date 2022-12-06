@@ -28,6 +28,14 @@ feature(
                         "[SYSTEM_INCLUDES]",
                     ],
                 ),
+                flag_group(
+                    expand_if_available = "includes",
+                    flags = [
+                        "-include",
+                        "%{includes}",
+                    ],
+                    iterate_over = "includes",
+                ),
             ],
         ),
     ],
