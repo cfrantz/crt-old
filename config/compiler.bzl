@@ -20,11 +20,11 @@ PARAM_DEFAULTS = {
     "abi_libc_version": "unknown",
 }
 
-def listify_flags(flag, args = [], spaces_in_args=False):
+def listify_flags(flag, args = [], spaces_in_args = False):
     args = [flag.format(p) for p in args]
     value = "|".join(args)
     if not spaces_in_args:
-        value = value.replace(' ', '|')
+        value = value.replace(" ", "|")
     return value
 
 def union(*args, **kwargs):
