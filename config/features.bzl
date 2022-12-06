@@ -44,6 +44,8 @@ C_COMPILE_NO_ASM_ACTIONS = [
 
 LD_ALL_ACTIONS = [
     ACTION_NAMES.cpp_link_executable,
+    ACTION_NAMES.cpp_link_dynamic_library,
+    ACTION_NAMES.cpp_link_nodeps_dynamic_library,
 ]
 
 FeatureSetInfo = provider(fields = ["features", "subst"])
