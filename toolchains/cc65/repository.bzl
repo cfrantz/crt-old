@@ -7,7 +7,7 @@ load("@crt//config:repo.bzl", "compiler_repository")
 def cc65_repos():
     compiler_repository(
         name = "cc65_files",
-        url = "https://github.com/lowRISC/crt/releases/download/v0.3.7-pre3/cc65-binaries.tar.xz",
-        sha256 = "3e9d26b473f5452a9746189a5b970ffbcd7da36e5d6e5917c035cd2149f64946",
+        url = "https://github.com/lowRISC/crt/releases/download/v0.3.7/cc65-binaries.tar.xz",
+        sha256 = "26a9a4303edee579a44192e2272a923fe5096d9ddf499a97fac2cd92cf8bd418",
         strip_prefix = "cc65",
     )
