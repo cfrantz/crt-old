@@ -45,10 +45,55 @@ feature(
     ],
 )
 
+feature(
+    name = "opt",
+    enabled = False,
+    flag_sets = [
+        flag_set(
+            actions = CPP_ALL_COMPILE_ACTIONS + C_ALL_COMPILE_ACTIONS,
+            flag_groups = [
+                flag_group(
+                    flags = [
+                        "-O2",
+                        "-finline-small-functions",
+                    ],
+                ),
+            ],
+        ),
+    ],
+)
+
+feature(
+    name = "reproducible",
+    enabled = True,
+    flag_sets = [
+        flag_set(
+            actions = CPP_ALL_COMPILE_ACTIONS + C_ALL_COMPILE_ACTIONS,
+            flag_groups = [
+                flag_group(
+                    flags = ["-Werror=date-time"],
+                ),
+            ],
+        ),
+        flag_set(
+            actions = LD_ALL_ACTIONS,
+            flag_groups = [
+                flag_group(
+                    flags = [
+                        "-Wl,--no-insert-timestamp",
+                    ],
+                ),
+            ],
+        ),
+    ],
+)
+
 feature_set(
     name = "windows",
     base = ["//features/common"],
     feature = [
         ":default_link_flags",
+        ":opt",
+        ":reproducible",
     ],
 )
