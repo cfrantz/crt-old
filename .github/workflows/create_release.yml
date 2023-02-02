@@ -27,7 +27,5 @@ jobs:
           sed -i -e "s/#local_test: //g" WORKSPACE.bazel
           bazel test //...
       - name: Publish Release
-        with:
-         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           bazel run :release -- ${{ inputs.release_tag }}
