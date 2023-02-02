@@ -1,0 +1,33 @@
+name: Create Release
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        required: true
+        type: string
+
+jobs:
+  release:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 80
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+      - name: Build
+        run: |
+          bazel build :release
+          bazel run :release -- \
+              --norelease \
+              --noscript \
+              --copy ${PWD}/prebuilt \
+              ${{ inputs.release_tag }}
+      - name: Test
+        run: |
+          cd tests
+          sed -i -e "s/#local_test: //g" WORKSPACE.bazel
+          bazel test //...
+      - name: Publish Release
+        with:
+         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          bazel run :release -- ${{ inputs.release_tag }}
