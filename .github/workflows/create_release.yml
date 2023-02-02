@@ -1,0 +1,45 @@
+name: Create Release
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        required: true
+        type: string
+
+jobs:
+  release:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 180
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+      # Update the package index, then install all dependencies listed in
+      # the various apt-requirements.txt files in the project.
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y $(find . -name apt-requirements.txt | xargs sed -e "s/#.*//g")
+      - name: Build
+        run: |
+          bazel build :release
+          bazel run :release -- \
+              --norelease \
+              --noscript \
+              --copy ${PWD}/prebuilt \
+              ${{ inputs.release_tag }}
+      - name: Test
+        run: |
+          cd tests
+          sed -i -e "s/#local_test: //g" WORKSPACE.bazel
+          bazel test //...
+      # The CRT release process renders and commits template files as part
+      # of the release.  We use the github-actions bot as the author of the
+      # commit.  The bot email address is discussed in this thread:
+      # https://github.com/orgs/community/discussions/26560
+      - name: Publish Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          bazel run :release -- ${{ inputs.release_tag }}
